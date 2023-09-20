@@ -28,20 +28,20 @@
     <input type="text" name="dni" id="dni"><br>
     </p>
 
-    <p>// en el radio hay que poner el value para saber el valor
-        Sexo:<br>
-    <input type="radio" name="sexo" id="hombre" value="Hombre">Hombre<br>
+    <p>
+        <label >Sexo:</label><br>
+    <input type="radio" name="sexo"   id="hombre" value="Hombre" >Hombre<br>
     <input type="radio" name="sexo" id="mujer" value="Mujer">Mujer<br>
     </p>
 
-    <p>//con la etiqueta accept (image/*)decimos que solo se puenden imagenes
+    <p>
     <label for="foto">Incluir mi foto </label>
     <input type="file" name="foto" id="foto" accept="image/*">
     </p>
 
     <p>
-        Nacido en:
-        <select name="nacionalidad">
+        <label for="nacido">Nacido en:</label>
+        <select id="nacionalidad"name="nacido1">
           <option>Malaga</option>
           <option>Vitoria</option>
           <option>Villacarrillo</option>
@@ -50,14 +50,18 @@
 
     <p>
     <label>Comentario:</label>
-    <textarea name="textarea" rows="10" cols="50">Write something here</textarea>
+    <textarea name="textarea" rows="10" cols="50" id="text"></textarea>
     </p>
 
    <p>
-   <input type="checkbox" name="subscripcion" checked="checked" />
-    Subscribirse al boletin Nacional<br/>
+   <input type="checkbox" name="subscripcion" />
+    <label for="subs">Subscribirse al boletin de Novedades</label><br/>
    </p>
-   
+
+   <p>
+   <button type="submit" name="boton1">Guardar Cambios</button>
+   <button type="reset" name="boton2">Borrar los datos introducidos</button>
+   </p>
 </form>
 </body>
 </html>

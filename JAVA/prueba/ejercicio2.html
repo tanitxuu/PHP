@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<body>
+  <h1>Cambio de imagenes con JavaScrip</h1>
+  <img id="myFPImage" onclick="cambiaPic()" src="/img/gato5.jpeg" width="360" height="360">
+  <p>Haz click sobre las imagenes para cambiarlas</p>
+  <script>
+    function cambiaPic() {
+      var image = document.getElementById('myFPImage');
+      if (image.src.match("gato5.jpeg")) {
+        image.src = "/img/gato4.jpeg";
+      } else if (image.src.match("gato4.jpeg")) {
+        image.src = "/img/gato3.jpeg";
+      } else if (image.src.match("gato3.jpeg")) {
+        image.src = "/img/gato2.jpeg";
+      } else if (image.src.match("gato2.jpeg")) {
+        image.src = "/img/gato1.jpeg";
+      } else {
+        image.src = "/img/gato5.jpeg";
+      }
+    }    
+  </script>
+</body>
+
+</html
