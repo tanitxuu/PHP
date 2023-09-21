@@ -1,6 +1,4 @@
-<?php
-if(isset($_POST["boton1"])){
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 <body>  
@@ -9,18 +7,17 @@ if(isset($_POST["boton1"])){
     echo "<p><strong>Nombre: </strong>".$_POST["nombre"]."</p>";
     echo "<p><strong>Apellido: </strong>".$_POST["apellido"]."</p>";
     echo "<p><strong>Contraseña: </strong>".$_POST["contraseña"]."</p>";
-    echo "<p><strong>Dni: </strong>".$_POST["dni"]."</p>";
-    if(isset ($_POST["sexo"])){
+    
+    
         echo "<p><strong>Sexo: </strong>".$_POST["sexo"]."</p>";
-    }else{
-    echo "<p><strong>Sexo: </strong>  No seleccionado </p>";}
+    
 
-    if(isset ($_POST["nacido1"])){
-        echo "<p><strong>Nacionalidad: </strong>".$_POST["nacido1"]."</p>";
+    if(isset ($_POST["nacido"])){
+        echo "<p><strong>Nacionalidad: </strong>".$_POST["nacido"]."</p>";
     }else{
     echo "<p><strong>Nacionalidad: </strong>  No seleccionado </p>";}
     
-    echo "<p><strong>Comentario: </strong>".$_POST["textarea"]."</p>";
+    echo "<p><strong>Comentario: </strong>".$_POST["comentarios"]."</p>";
     if(isset ($_POST["subscripcion"])){
         echo "<p><strong>Subscripcion: </strong> Si</p>";
     }else{
@@ -29,7 +26,3 @@ if(isset($_POST["boton1"])){
 </body>
 </html>
 <?php
-}else
-    header("Location:index.php");
-
-?>

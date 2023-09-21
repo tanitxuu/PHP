@@ -21,14 +21,14 @@
     <input type="radio" name="sexo" id="mujer" value="Mujer">Mujer
     </p>
     <p>
-    <label >Aficiones:</label><br>
+    <label>Aficiones:</label><br>
     <input type="checkbox" name="aficiones"   id="deportes" value="Deportes" >Deportes
     <input type="checkbox" name="aficiones" id="lectura" value="Lectura">Lectura
     <input type="checkbox" name="aficiones" id="otros" value="Otros">Otros
     </p>
     <p>
     <label>Comentario:</label>
-    <textarea name="textarea" rows="10" cols="50" id="text"></textarea>
+    <textarea name="textarea" id="text"></textarea>
     </p>
     <p>
    <button type="submit" name="boton1">Enviar</button>
