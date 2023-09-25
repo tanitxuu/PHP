@@ -1,6 +1,8 @@
 
 <?php
-
+if(isset($_POST["btborrar"])){
+    unset($_POST);
+}
    
     if(isset($_POST["btenviar"])) { //COMPRUEBO ERRORES
 
