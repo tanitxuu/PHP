@@ -7,15 +7,15 @@
 </head>
 <body>
     <?php
-    $c[]="Madrid";
-    $c[]="Barcelona";
-    $c[]="Londres";
-    $c[]="New York";
-    $c[]="Los Angeles";
-    $c[]="Chicago";
+    $c['MD']="Madrid";
+    $c['BC']="Barcelona";
+    $c['LD']="Londres";
+    $c['NY']="New York";
+    $c['LAG']="Los Angeles";
+    $c['CC']="Chicago";
 
 foreach ($c as $i => $ciudad) {
-    echo "<p>La ciudad con el indice ".$i." tiene el nombre ".$ciudad."</p>";
+    echo "<p>El indice del array contiene como valor ".$ciudad." es: ".$i."</p>";
 }
 
 
