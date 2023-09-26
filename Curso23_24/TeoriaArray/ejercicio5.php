@@ -7,10 +7,12 @@
 </head>
 <body>
     <?php
-    $p['Enero']=9;
-    $p['Febrero']=12;
-    $p['Marzo']=0;
-    $p['Abril']=17;
+    $p['Nombre']="Pedro Torres";
+    $p['Direccion']="C/Mayor,37";
+    $p['Telefono']=123456789;
+    foreach ($p as $d => $datos) {
+        echo "<p><b>".$d.":</b> ".$datos."</p>";
+    };
 
 
 
