@@ -13,37 +13,34 @@
         "Los Griffin"=>array("Padre"=>"Peter","Madre"=>"Loise","Hijos"=>array(
             "Hijo1"=>"Chris","Hijo2"=>"Meg","Hijo3"=>"Stewie")));
             
-        echo "<h1>Ejercicio 17</h1>";
-        echo "<ul>";
-        foreach ($familias as $f => $nom) {
-            echo "<li>";
-            echo $f;
             echo "<ul>";
-                foreach ($nom as $padres => $n) {
-                    echo "<li>";
-                    echo $padres.": ";
-                    
-                    if(is_array($n)){
-                        echo "<ul>";
-                        foreach($n as $hi => $hn){
-                           
-                            echo "<li>";
-                            echo $hi.": ".$hn;
-                           
-                            echo "</li>";
+            foreach ($familias as $indice => $profesion) {
+                echo "<li>";
+                echo $indice;
+                echo "<ul>";
+                    foreach ($profesion as $indice2 => $nombres) {
+                        echo "<li>";
+                        echo $indice2.": ";
+                        if(is_array($nombres)){
+                            echo "<ul>";
+                            foreach ($nombres as $indice3 => $valor) {
+                                echo "<li>";
+                                echo $indice3.": ";
+                                echo $valor;
+                                echo "</li>";
+                            }
+                            echo "</ul>";
+                        }else {
+                            echo $nombres;
                         }
-                    }else{
-                        echo $n;
+                        echo "</li>";
                     }
-                    echo "</ul>";
-                    echo "</li>";
-                }
+                echo "</ul>";
+                echo "</li>";
+            }
             echo "</ul>";
-            echo "</li>";
-
-        }
-      
-        echo "</ul>";
+            
+        ?>
     ?>
     
 </body>
