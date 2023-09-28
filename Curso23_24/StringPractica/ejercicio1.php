@@ -5,10 +5,10 @@
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Document</title>
-                <style> .error{color:red} .div{color:blue}</style>
+                <style> .error{color:red} div{background-color:lightblue; border:1px solid black;}</style>
             </head>
             <body>
-            <div id="div">
+            <div>
                 <h1>Ripios-Formulario</h1>
                 <form action="index.php" method="post" enctype="multipart/form-data">
                     <p>dime dos palabras y te dire si riman o no</p>
