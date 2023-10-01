@@ -22,7 +22,6 @@
                         }
                         ?>
                     </p>
-            
                     <p>
                         <label for="segundap">Segunda palabra:</label>
                         <input type="text" name="segundapa" id="apellido" value="<?php if(isset($_POST["apellido"])) echo $_POST["apellido"];?>"><br>
@@ -35,6 +34,12 @@
                     </p>
                     <button type="submit" name="btcomparar">Comparar</button>
                     </form>
-                    <div>
+                </div>
+                <div>
+                    <p>
+                     
+                    </p>
+                   
+                </div>
             </body>
             </html>
