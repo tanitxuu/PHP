@@ -1,6 +1,6 @@
 <?php
 
-    const VALOR = array('M' => 1000, 'D' => 500, 'C' => 100, 'L' => 50, 'X' => 10, 'V' => 5, 'I' => 1);
+    const VALOR = array(1000 => "M", 500 => 'D', 100 => 'C', 50 => 'L', 10 => 'X', 5 => 'V', 1=> 'I' );
  
     function letras_bien($texto1){
         $bien=true;
@@ -70,7 +70,7 @@ if (isset($_POST["comparar"])) {
 
     <h1 style="text-align:center">Romanos a Arabes - Formulario</h1>
 
-    <p>Dime un numero en romano y te lo devuelvo a cifras arabes </p>
+    <p>Dime un numero  y te lo devuelvo en numeros romanos </p>
     <p>
         <label for="primera">Numero :</label>
         <input type="text" name="primera" id="primera" value ="<?php if(isset($_POST["primera"])) echo $_POST["primera"]?>">
