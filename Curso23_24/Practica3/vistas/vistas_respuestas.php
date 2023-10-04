@@ -8,9 +8,8 @@
     echo "<p><strong>Apellido: </strong>".$_POST["apellido"]."</p>";
     echo "<p><strong>Contraseña: </strong>".$_POST["contraseña"]."</p>";
     
-    
-        echo "<p><strong>Sexo: </strong>".$_POST["sexo"]."</p>";
-    
+    echo "<p><strong>Dni: </strong>".$_POST["dni"]."</p>";
+    echo "<p><strong>Sexo: </strong>".$_POST["sexo"]."</p>";
 
     if(isset ($_POST["nacido"])){
         echo "<p><strong>Nacionalidad: </strong>".$_POST["nacido"]."</p>";
