@@ -1,121 +1,89 @@
 <?php
 
-    const VALOR = array(1000 => "M", 500 => 'D', 100 => 'C', 50 => 'L', 10 => 'X', 5 => 'V', 1=> 'I' );
- 
-    function letras_bien($texto1){
-        $bien=true;
-     for ($i=0; $i < strlen($texto1); $i++) { 
-         if(!isset(VALOR[$texto1[$i]])){
-             $bien=false;
-             break;
-         }
-     }
-     return $bien;
-    }
- 
- 
-     function orden_bueno($texto1){
-        $bien=true;
-        for ($i=0; $i < strlen($texto1)-1; $i++) { 
-            if(VALOR[$texto1[$i]]<VALOR[$texto1[$i+1]]){
-                $bien=false;
-                break;
-            }
-        }
-        return $bien;
-     }
-     function repite_bien($texto1){
-        $veces["I"]=4;
-        $veces["V"]=1;
-        $veces["X"]=4;
-        $veces["L"]=1;
-        $veces["C"]=4;
-        $veces["D"]=1;
-        $veces["M"]=4;
-        $bien=true;
-        for ($i=0; $i < strlen($texto1); $i++) { 
-            $veces[$texto1[$i]]--;
-            if($veces[$texto1[$i]]==-1){
-                $bien=false;
-                break;
-            }
-        }
-        return $bien;
-     }
-     function es_correcto_romano($texto1){
-        return letras_bien($texto1) && orden_bueno($texto1) && repite_bien($texto1);
+function arabicToRoman($number) {
+    if ($number < 1 || $number >= 5000) {
+        return "Número fuera de rango";
     }
 
-//Si los campos estan vacios o no contienen la longitud adecuada
-if (isset($_POST["comparar"])) {
-  
-    $texto1 = trim($_POST["primera"]);
-    $texto_m=strtoupper($texto1);
-    $errorFormu = $texto1==""|| !es_correcto_romano($texto_m);
+    $roman_numerals = array(
+        "M" => 1000,
+        "CM" => 900,
+        "D" => 500,
+        "CD" => 400,
+        "C" => 100,
+        "XC" => 90,
+        "L" => 50,
+        "XL" => 40,
+        "X" => 10,
+        "IX" => 9,
+        "V" => 5,
+        "IV" => 4,
+        "I" => 1
+    );
+
+    $roman = "";
+
+    foreach ($roman_numerals as $key => $value) {
+        while ($number >= $value) {
+            $roman .= $key;
+            $number -= $value;
+        }
+    }
+
+    return $roman;
+}
+
+$numero_arabe = "";
+$numero_romano = "";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $numero_arabe = $_POST["numero_arabe"];
+    if (is_numeric($numero_arabe) && $numero_arabe >= 1 && $numero_arabe < 5000) {
+        $numero_romano = arabicToRoman($numero_arabe);
+    } else {
+        $numero_romano = "Número no válido";
+    }
 }
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicio1</title>
-    <style>.error{color:red;}</style>
+    <title>Conversor de Números Arabes a Romanos</title>
+    <style>
+        .error { color: red; }
+    </style>
 </head>
 <body>
-<form action="Ejercicio4.php" method="post" enctype="multipart/form-data">
-
-<div style="background-color:lightblue; border:solid; padding:5px;">
-
-    <h1 style="text-align:center">Romanos a Arabes - Formulario</h1>
-
-    <p>Dime un numero  y te lo devuelvo en numeros romanos </p>
-    <p>
-        <label for="primera">Numero :</label>
-        <input type="text" name="primera" id="primera" value ="<?php if(isset($_POST["primera"])) echo $_POST["primera"]?>">
-        <?php
-            if (isset($_POST["comparar"]) && $errorFormu) {
-                if ($texto1==""){
-                    echo "<span class='error'>*Campo Vacio*</span>";
-                }else{
-                    echo "<span class='error'>*No has escrito un numero romano*</span>";
+    <form method="post" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
+        <div style="background-color:lightblue; border:solid; padding:5px;">
+            <h1 style="text-align:center">Arabes a Romanos - Formulario</h1>
+            <p>Dime un número y te lo devuelvo en números romanos</p>
+            <p>
+                <label for="numero_arabe">Número:</label>
+                <input type="number" name="numero_arabe" id="numero_arabe" min="1" max="4999" value="<?php echo $numero_arabe; ?>" required>
+                <?php
+                if (isset($_POST["convertir"]) && $errorFormu) {
+                    if ($numero_arabe == "") {
+                        echo "<span class='error'>*Campo Vacío*</span>";
+                    } else {
+                        echo "<span class='error'>*Número no válido*</span>";
+                    }
                 }
-                
-            }
-        ?>
-    </p>
-    <p>
-        <button type="submit" name="comparar">Comprobar</button>
-    </p>
-
-</div>
-
-
-<?php
-
-    if (isset($_POST["comparar"]) && !$errorFormu) {
-        $res=0;
-        for ($i=0; $i <strlen($texto_m); $i++) { 
-            $res+=VALOR[$texto_m[$i]];
-        }
-        echo'<div style="background-color:lightgreen; border:solid; margin-top:10px; padding:5px;">';
-       
-        echo'<h1 style="text-align:center">Romanos a Arabes - Resultado</h1>';
-       
-        echo '<p> El numero romano '.$texto_m.' en arabe es '.$res.' </p>';
-        
-       
-        echo'</div>';
-      
-    
-    
-    
-    }    
-    
-
-?>
-
-</form>
+                ?>
+            </p>
+            <p>
+                <button type="submit" name="convertir">Convertir</button>
+            </p>
+        </div>
+        <?php if ($numero_romano !== "") : ?>
+            <div style="background-color:lightgreen; border:solid; margin-top:10px; padding:5px;">
+                <h1 style="text-align:center">Arabes a Romanos - Resultado</h1>
+                <p>El número arábigo <?php echo $numero_arabe; ?> en números romanos es: <?php echo $numero_romano; ?></p>
+            </div>
+        <?php endif; ?>
+    </form>
 </body>
 </html>
