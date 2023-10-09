@@ -72,6 +72,7 @@
                     <input type="file" name="archivo" id="archivo" accept="img/*"/>
                     <?php
                     if(isset($_POST["btenviar"]) && $error_archivo){
+                        
                     if($_FILES["archivo"]["error"]){
                     echo "<span class='error'>No se ha podido subir el archivo</span>";
                     }elseif(!getimagesize($_FILES["archivo"]["tmp_name"])){

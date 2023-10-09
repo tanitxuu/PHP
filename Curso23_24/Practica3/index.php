@@ -17,7 +17,7 @@ if(isset($_POST["btborrar"])){
     return $valido;
    }
     if(isset($_POST["btenviar"])) { //COMPRUEBO ERRORES
-        $error_archivo=$_FILES["archivo"]["error"] || !getimagesize($_FILES["archivo"]["tmp_name"])|| $_FILES["archivo"]["size"]>500*1024;
+        $error_archivo=$_FILES["archivo"]["name"]!="" && $_FILES["archivo"]["error"] || !getimagesize($_FILES["archivo"]["tmp_name"])|| $_FILES["archivo"]["size"]>500*1024;
         $error_nombre = $_POST["nombre"]==""; //mete en la variable error nombre , (si esta vacio mete true , y si esta relleno mete false)
         $error_apellido = $_POST["apellido"]=="";
         $error_contraseña = $_POST["contraseña"]=="";
