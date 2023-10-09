@@ -18,7 +18,7 @@
     echo "<p>".date('h:i:s')."</p>";
 
     //te dice si la fecha existe o no
-    if(checkdate(2,2,2023)){
+    if(checkdate(32,2,2023)){
        echo  "<p>Fecha buena</p>";
     }else{
        echo  "<p>Fecha Mala</p>";
