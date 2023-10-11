@@ -43,16 +43,54 @@ function fecha_valida($texto){
  ?>
 
 
-    <form action="Ejercicio1.php" method="post" enctype="multipart/form-data">
+    <form action="Ejercicio2.php" method="post" enctype="multipart/form-data">
 
         <div style="background-color:lightblue; border:solid; padding:5px;">
 
             <h1 style="text-align:center">Fechas - Formulario</h1>
 
             <p>
-                <label for="fecha1">Introduzca una fecha: (DD//MM/YYYY)</label>
-                <input type="text" name="fecha1" id="fecha1"
-                    value="<?php if(isset($_POST['fecha1'])) echo $_POST['fecha1']?>" />
+               Introduzca una fecha:<br>
+                <label for="dia">Dia</label>
+                    <select id="dia"name="dia">
+                        <?php
+                        for($i=1;$i<=31;$i++){
+                            $array_dias=[$i];
+                            echo "<option value='.$i.'>".$i."</option>";
+                        }
+                        ?>
+                      </select>
+                      <label for="mes">Mes:</label>
+                      <select id="mes"name="mes">
+                        <?php
+                         $array_meses[1]='Enero';
+                         $array_meses[2]='Febrero';
+                         $array_meses[3]='Marzo';
+                         $array_meses[4]='Abril';
+                         $array_meses[5]='Mayo';
+                         $array_meses[6]='Junio';
+                         $array_meses[7]='Julio';
+                         $array_meses[8]='Agosto';
+                         $array_meses[9]='Septiembre';
+                         $array_meses[10]='Octubre';
+                         $array_meses[11]='Noviembre';
+                         $array_meses[12]='Diciembre';
+                        
+                        foreach ($array_meses as $k => $i) {
+                            echo "<option value='.$k.'>".$i."</option>";
+                        }
+                            
+                        
+                        ?>
+                      </select>
+                      <label for="año">Año:</label>
+                      <select id="año"name="año">
+                        <?php
+                        for($i=date("Y");$i>=(date("Y")-50);$i++){
+                            echo "<option value='.$i.'>".$i."</option>";
+                        }
+                        ?>
+                      </select>
                 <?php
                 if (isset($_POST["calcular"]) && $errorFecha1) {
                 if($_POST["fecha1"]=="")
