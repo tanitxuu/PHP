@@ -15,17 +15,12 @@
 <body>
 
     <?php
-//Indicamos que despues X caracteres Y tiene que ser "/"
-function buenos_separadores($texto){
-    return substr($texto,2,1)=="/" && substr($texto,5,1)=="/";
-}
-//Decimos si los caracteres que estan en X y cogiendo Y son numericos
-function numeros_buenos($texto){
-    return is_numeric(substr($texto,0,2)) && is_numeric(substr($texto,3,2)) && is_numeric(substr($texto,6,4));
-}
+
+
+
 //Comrpueba si la fecha existe o no con true o false con caracteres que estan en X y cogiendo Y son numericos
-function fecha_valida($texto){
-    return checkdate(substr($texto,3,2),substr($texto,0,2),substr($texto,6,4));
+function fecha_valida($d,$m,$y){
+    return checkdate($d,$m,$y);
 }
  
  //Si los campos estan vacios o no contienen la longitud adecuada
@@ -56,20 +51,20 @@ function fecha_valida($texto){
                         <?php
                         for($i=1;$i<=31;$i++){
                             $array_dias=[$i];
-                            echo "<option value='.$i.'>".$i."</option>";
+                            echo "<option value='.0.$i.'>'.$i.'</option>";
                         }
                         ?>
                       </select>
                       <label for="mes">Mes:</label>
                       <select id="mes"name="mes">
                         <?php
-                         $array_meses[1]='Enero';
-                         $array_meses[2]='Febrero';
-                         $array_meses[3]='Marzo';
-                         $array_meses[4]='Abril';
-                         $array_meses[5]='Mayo';
-                         $array_meses[6]='Junio';
-                         $array_meses[7]='Julio';
+                         $array_meses[01]='Enero';
+                         $array_meses[02]='Febrero';
+                         $array_meses[03]='Marzo';
+                         $array_meses[04]='Abril';
+                         $array_meses[05]='Mayo';
+                         $array_meses[06]='Junio';
+                         $array_meses[07]='Julio';
                          $array_meses[8]='Agosto';
                          $array_meses[9]='Septiembre';
                          $array_meses[10]='Octubre';
@@ -80,7 +75,6 @@ function fecha_valida($texto){
                             echo "<option value='.$k.'>".$i."</option>";
                         }
                             
-                        
                         ?>
                       </select>
                       <label for="año">Año:</label>
@@ -101,9 +95,47 @@ function fecha_valida($texto){
  ?>
             </p>
             <p>
-                <label for="fecha2">Introduzca una fecha: (DD//MM/YYYY)</label>
-                <input type="text" name="fecha2" id="fecha2"
-                    value="<?php if(isset($_POST['fecha2'])) echo $_POST['fecha2']?>" />
+                <label for="fecha2">Introduzca una fecha: </label>
+                <label for="dia">Dia</label>
+                    <select id="dia"name="dia">
+                        <?php
+                        for($i=1;$i<=31;$i++){
+                            $array_dias=[$i];
+                            echo "<option value='.$i.'>".$i."</option>";
+                        }
+                        ?>
+                      </select>
+                      <label for="mes">Mes:</label>
+                      <select id="mes"name="mes">
+                        <?php
+                           $array_meses[01]='Enero';
+                           $array_meses[02]='Febrero';
+                           $array_meses[03]='Marzo';
+                           $array_meses[04]='Abril';
+                           $array_meses[05]='Mayo';
+                           $array_meses[06]='Junio';
+                           $array_meses[07]='Julio';
+                           $array_meses[8]='Agosto';
+                           $array_meses[9]='Septiembre';
+                           $array_meses[10]='Octubre';
+                           $array_meses[11]='Noviembre';
+                           $array_meses[12]='Diciembre';
+                          
+                        
+                        foreach ($array_meses as $k => $i) {
+                            echo "<option value='.$k.'>".$i."</option>";
+                        }
+                            
+                        ?>
+                      </select>
+                      <label for="año">Año:</label>
+                      <select id="año"name="año">
+                        <?php
+                        for($i=date("Y");$i>=(date("Y")-50);$i++){
+                            echo "<option value='.$i.'>".$i."</option>";
+                        }
+                        ?>
+                      </select>
                 <?php
            if (isset($_POST["calcular"]) && $errorFecha2){
             if($_POST["fecha2"]=="")
@@ -134,8 +166,8 @@ function fecha_valida($texto){
  $array_fecha2=explode("/",$_POST["fecha2"]);
 
  //Pasamos la fecha por MM/DD/YY nos lo pasa a segundos
- $tiempo1=mktime(0,0,0,$array_fecha1[1],$array_fecha1[0],$array_fecha1[2]);
- $tiempo2=mktime(0,0,0,$array_fecha2[1],$array_fecha2[0],$array_fecha2[2]);
+ $tiempo1=mktime(0,0,0,$_POST["mes"],$_POST["dia"],$_POST["año"]);
+ $tiempo2=mktime(0,0,0,$_POST["mes"],$_POST["dia"],$_POST["año"]);
 
  //restamos los segundos,con numeros enteros
  $dif_segundos=abs($tiempo1-$tiempo2);
