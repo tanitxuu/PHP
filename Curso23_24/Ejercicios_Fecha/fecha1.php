@@ -43,7 +43,7 @@ function fecha_valida($texto){
  ?>
 
 
-    <form action="Ejercicio1.php" method="post" enctype="multipart/form-data">
+    <form action="fecha1.php" method="post" enctype="multipart/form-data">
 
         <div style="background-color:lightblue; border:solid; padding:5px;">
 
