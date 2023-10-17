@@ -29,7 +29,12 @@
     }
     //fput lo mismo que el write /m el PHP.EOL. nos hace escribir en la linea de abajo
     fwrite($fd1,PHP_EOL."no me vas a dejar escribir");
-    fclose($fd1);//para cerrar el fichero
+    fclose($fd1);//para cerrar el fichero*/
+    $todo_fichero=file_get_contents("ruta.txt");
+    $todo_fichero=file_get_contents("https://www.google.com");
+    
+    //echo "<pre>".$todo_fichero."</pre>";//nos pone los enters
+   echo nl2br($todo_fichero);//nos pone los enters tamb
     ?>
 </body>
 </html>
