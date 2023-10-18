@@ -10,12 +10,12 @@
     <?php
         @$fd1=fopen("http://dwese.icarosproject.com/PHP/datos_ficheros.txt","r");
         die("<h3>No se ha podido abrir el fichero: http://dwese.icarosproject.com/PHP/datos_ficheros.txt");
+     fclose($fd1);
+     ?>
+       <form action="Ejercicio6.php" method="post">
+    
 
-        else{
-        $linea=fgets($fd1);
-        $datos_linea=explode("\t",$linea);
-        
-        }
+       </form>
     ?>
 </body>
 </html>
