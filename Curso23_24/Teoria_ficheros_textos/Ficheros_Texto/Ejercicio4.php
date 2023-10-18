@@ -1,6 +1,6 @@
 <?php
 if(isset($_POST["enviar"])){
-    $error_archivo=$_FILES["archivo"]["name"]=="" && $_FILES["archivo"]["error"] || $_FILES["archivo"]["size"]>500*1024;
+    $error_archivo=$_FILES["archivo"]["name"]=="" || $_FILES["archivo"]["error"] || $_FILES["archivo"]["size"]>2500*1024 || $_FILES["archivo"]["type"]!="text/plain";
 }
 if(isset($_POST["enviar"]) && !$error_archivo){
 ?>
@@ -10,28 +10,16 @@ if(isset($_POST["enviar"]) && !$error_archivo){
     <title>Ejercicio4</title>
 </head>
 <body>
-    <h1> EJERCICIO 4</h1>
-    <h2>Datos del archico subidos</h2>
     <form action="Ejercicio4.php" method="post" enctype="multipart/form-data" >
     <p>
         <?php
-        $array_nombre=explode(".",$_FILES["archivo"]["name"]);
-        $ext="";
-        if(count($array_nombre)>1){
-            $ext=".".end($array_nombre);
-           
-        }
-        $nombre_nuevo.=$ext;
-          
-        echo "<p><strong>Nombre:</strong>".$_FILES["archivo"]["name"]."</p>";
-         
-
+        $contenido_fichero=file_get_contents($_FILES["archivo"]["tmp_name"]);
+        echo "<h3>El numero de palabras que contiene el archivo seleccionado es ".str_word_count($contenido_fichero)."</h3>";
+    
       
         ?>
     </p>
-    <p>
-        <button type="submit" name="enviar">Enviar</button>
-    </p>
+
     </form>
 </body>
 </html>
@@ -51,17 +39,18 @@ if(isset($_POST["enviar"]) && !$error_archivo){
     <h2></h2>
     <form action="Ejercicio4.php" method="post" enctype="multipart/form-data" >
     <p>
-        <label for="archivo">seleccione un archivo imagen (Max 500KB):</label>
-        <input type="file" name="archivo" id="archivo" accept="img/*"/>
+        <label for="archivo">seleccione un archivo de texto para contar las palabras (Max 2,5MB):</label>
+        <input type="file" name="archivo" id="archivo" accept=".txt "/>
         <?php
         if(isset($_POST["enviar"]) && $error_archivo){
             if($_FILES["archivo"]["name"]!=""){
-                if($_FILES["archivo"]["error"]){
+                echo "<span class='error'></span>";
+            }elseif($_FILES["archivo"]["error"]){
                 echo "<span class='error'>No se ha podido subir el archivo</span>";
-                }elseif(!getimagesize($_FILES["archivo"]["tmp_name"])){
-                echo "<span class='error'>No has selecionado un archivo tipo img</span>";
-                }else{
-                echo "<span class='error'>El archivo supera el tamaño</span>";}}
+            }elseif($_FILES["archivo"]["type"]!="text/pain"){
+                echo "<span class='error'>No has selecionado un archivo tipo txt</span>";
+            }else{
+                echo "<span class='error'>El archivo supera el tamaño</span>";}
         }
         ?>
     </p>
