@@ -6,7 +6,11 @@ if(isset($_POST["btnNuevoUsu"]) || isset($_POST["btnContinuar"])){
         $error_contraseña=$_POST["contraseña"]=="";
         $error_email=$_POST["email"]=="" || !filter_var($_POST["email"],FILTER_VALIDATE_EMAIL);
         $error_form=$error_contraseña||$error_email||$error_usuario||$error_nombre;
-    }
+    
+        if(!$error_form){
+
+        }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
