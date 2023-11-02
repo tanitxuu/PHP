@@ -83,15 +83,15 @@ if ($fd) {
     $horas[]="13:45-14:45";
     echo "<table>";
     echo "<tr><th></th><th>Lunes</th><th>Martes</th><th>Miercoles</th><th>Jueves</th><th>Viernes</th></tr>";
-        for ($hora=1; $hora <=7 ; $hora++) { 
+        for ($h=1; $h <=7 ; $h++) { 
             echo "<tr>";
-            echo "<th>".$horas[$hora]."</th>";
-            if($hora==4){
+            echo "<th>".$horas[$h]."</th>";
+            if($h==4){
                 echo "<td colspan='5'>RECREO</td>";
             }else{
-                for ($dia=1; $dia <= 5 ; $dia++) { 
-                    if(isset($horario_profe[$dia][$hora])){
-                        echo "<td>".$horario_profe[$dia][$hora]."</td>";
+                for ($d=1; $d <= 5 ; $d++) { 
+                    if(isset($horario_profe[$d][$h])){
+                        echo "<td>".$horario_profe[$d][$h]."</td>";
                     }
                     echo "<td></td>";
                 }
