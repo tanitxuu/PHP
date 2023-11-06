@@ -37,7 +37,7 @@
     }catch(Exception $e){
 
         //no sale el mensage del error
-        die("<p>No a podido conectarse a la base de datos: ".$e->getMessage()."</p>");
+        die("<p>No a podido conectarse a la base de datos: ".$e->getMessage()."</p></boby></html>");
     }
 
   
@@ -51,7 +51,7 @@
 
         mysqli_close($conexion);
         //controlamos cualquier error que pueda pasar
-        die("<p>Inposible realizar la consulta: ".$e->getMessage()."</p>");
+        die("<p>Inposible realizar la consulta: ".$e->getMessage()."</p></boby></html>");
     }
     //metemos el resultado de la consulta en una variable
     $tupla=mysqli_fetch_assoc($resultado);
@@ -83,9 +83,10 @@ if(mysqli_num_rows($resultado)>1){
     
     echo "<form action='nuevousu.php' method='post'>";
     echo "<p><button type='submit' name='btnNuevoUsu'>Insertar nuevo usuario</button></p>";
-   echo  "</form>";
+    echo  "</form>";
     
 }
+
 //cerramos la BD
 mysqli_close($conexion);
     ?>
