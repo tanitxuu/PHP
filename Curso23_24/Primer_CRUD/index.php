@@ -24,6 +24,10 @@
             height: 50px;
             width: 50px;
         }
+        .enlace{
+            border: none;
+            background: none;
+        }
         </style>
 </head>
 <body>
@@ -62,7 +66,7 @@ echo "<form action='nuevousu.php' method='post'></form>";
     mysqli_data_seek($resultado,0);
 
 //con esto digo que si el resultado de la consulta tiene mas de una columna me haga la tabla   
-if(mysqli_num_rows($resultado)>1){
+
 
     echo "<table>";
     //creamos los titulos de la tabla
@@ -70,25 +74,68 @@ if(mysqli_num_rows($resultado)>1){
         //con un while leemos los datos de la consulta fila por fila
         while($tupla=mysqli_fetch_assoc($resultado)){
             echo "<tr>";
-            echo "<td><a href='#'>".$tupla["nombre"]."</a></td>";
-            echo "<td><a href='#'><img src='img/borrar.png' alt='borrar' title='Borrar Usuario'></a></td>";
-            echo "<td><a href='#'><img src='img/editar.png' alt='editar' title='Editar Usuario'></a></td>";
+            echo "<td><form action='index.php' method='post'><button tittle='Detalles del usuario' class='enlace' type='submit' value='".$tupla["id_usuario"]."' name='btnDe'>".$tupla["nombre"]."</button></form></td>";
+            echo "<td><form action='index.php' method='post'><button class='enlace' type ='submit' name='btnBo' value='".$tupla["id_usuario"]."'><img src='img/borrar.png' alt='borrar' title='Borrar Usuario'></buttton></form></td>";
+            echo "<td><form action='index.php' method='post'><button class='enlace' type ='submit' name='btnEd' value='".$tupla["id_usuario"]."'><img src='img/editar.png' alt='editar' title='Editar Usuario'></buttton></form></td>";
             echo "</tr>";
         }
        
     echo "</table>";
+    if(isset($_POST["btnDe"])){
+
+        echo "<h3> Detalles del usuario con id: ".$_POST["btnDe"]."</h3>";
+
+        try {
+
+            $consulta="select * from usuarios where id_usuario='".$_POST["btnDe"]."'";
+            $resultado=mysqli_query($conexion,$consulta);
+            
+        } catch (Exception $e) {
+    
+            mysqli_close($conexion);
+            die("<p>No se ha podido realizar la consulta: ".$e->getMessage()."</p></body></html>");
+            
+        }
+
+        //ES BASICAMENTE $tupla con otro nombre
+        if(mysqli_num_rows($resultado)>0){
+        $datos_usuario=mysqli_fetch_assoc($resultado);
+
+        echo "<p>";
+        echo "<strong>Nombre: </strong>".$datos_usuario["nombre"]."</br>";
+        echo "<strong>Usuario: </strong>".$datos_usuario["usuario"]."</br>";
+        echo "<strong>Email: </strong>".$datos_usuario["email"]."</br>";
+        echo "</p>";
+        echo "<form action='index.php' method='post'>";
+        echo "<p><button type='submit'>Volver</button></p>";
+        echo "</form>";
+        }else{
+        echo "<p>El usuario regristrado ya no se encuentra en la BD</p>";}
+    }elseif(isset($_POST["btnBo"])){
+
+
+
+    }elseif(isset($_POST["btnEd"])){
+
+        
+
+
+
+    }else{
+    echo "<form action='usuario_nuevo.php' method='post'>";
+    echo "<p><button type='submit' name='btnNuevoUsuario'>Insertar nuevo usuario</button></p>";
+    echo "</form>";
+
+}
+
+
+
+    
 
     //despues de trabajar con datos los liberamos
     mysqli_free_result($resultado);
-    
-    echo "<form action='nuevousu.php' method='post'>";
-    echo "<p><button type='submit' name='btnNuevoUsu'>Insertar nuevo usuario</button></p>";
-    echo  "</form>";
-    
-}
-
-//cerramos la BD
-mysqli_close($conexion);
+    //cerramos la BD
+    mysqli_close($conexion);
     ?>
     
 </body>
