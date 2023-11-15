@@ -1,11 +1,12 @@
 <?php
 $dinero=$_REQUEST["dinero"];
 $interes=$_REQUEST["interes"];
-$interes=$_REQUEST["meses"];
+$meses=$_REQUEST["meses"];
 
-    if($parametro1 == "Admin" && $parametro2 == "1234"){
-        echo "VALIDO";
+    if ($dinero == 0 || $interes == 0 || $meses == 0 ){
+        echo "Rellena todos los campos";
     }else{
-        echo "NO VALIDO";
+        $cuota= $dinero * (1+($interes/100)) / $meses;
+        echo "La cuota mensual sera de: ".$cuota."€";
     }
 ?>

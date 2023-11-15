@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        let visualiza = (arr, obj) => {
+            arr.map(e => {
+                if (Array.isArray(e)) {
+                    let newobj = document.createElement("ul");
+                    obj.appendChild(newobj)
+                    visualiza(e, newobj)
+                } else {
+                    let nodo = document.createElement("li");
+                    //la e.nombre son los padres  y la e los hijos y padres sin hijos
+                    let texto = document.createTextNode(e.nombre || e);
+                    nodo.appendChild(texto);
+                    obj.appendChild(nodo);
+                    if (e.hijos) {
+                        let newobj = document.createElement("ul");
+                        obj.appendChild(newobj)
+                        visualiza(e.hijos, newobj)
+                    }
+                }
+            })
+        }
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                let objJSON = this.responseText;
+                objJSON = JSON.parse(objJSON);
+                let arrayReyesGodos = Object.values(objJSON);
+                visualiza(arrayReyesGodos, document.getElementById("txtSugerencia"));
+            }
+        };
+        xmlhttp.open("GET", "reyesgodos.php", true);
+        xmlhttp.send();
+
+    </script>
+</head>
+
+<body>
+    <h1>Reyes Godos</h1>
+
+    <p id="txtSugerencia"></p>
+
+</body>
+
+</html>

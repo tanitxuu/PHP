@@ -5,23 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script >
-      const calculo=()=>{
-        let dinero = document.getElementById("dinero").value
-        let interes = document.getElementById("interes").value
-        let meses = document.getElementById("meses").value
-           var xmlhttp = new XMLHttpRequest();
-           xmlhttp.onreadystatechange = function() {
-             if (this.readyState == 4 && this.status == 200) {
-               console.log(this.responseText);
-             }
-           };
-           console.log(nombre+" "+clave)
-           xmlhttp.open("GET", "http://localhost/Proyectos/JavaScript/prestamo/prestamo.php?dinero="+dinero+"&interes="+interes,+"&meses="+meses,true);
-           // La dirección anterior corresponde a la ubicación de la página php en el servidor localhost
-           // Esta dirección podrá diferir dependiendo de la necesidad del programador.
-           xmlhttp.send();
-        }  
-        
+const calculo = () => {
+    let dinero = document.getElementById("dinero").value
+    let interes = document.getElementById("interes").value
+    let meses = document.getElementById("meses").value
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("txtSugerencia").innerHTML = this.responseText;
+        }
+    };
+    // Corregir la construcción de la URL aquí
+    xmlhttp.open("GET", "http://localhost/Proyectos/JavaScript/prestamo/prestamo.php?dinero=" + dinero + "&interes=" + interes + "&meses=" + meses, true);
+    xmlhttp.send();
+}
+
     </script>
 </head>
 <body>
@@ -30,8 +28,8 @@
         <input type="number" name="dinero" placeholder="Capital solicitada" id="dinero"><br>
         <input type="number" name="interes" placeholder="Interes anual" id="interes"><br>
         <input type="number" name="meses" placeholder="Plazo (meses)" id="meses"><br>
-        <button onclick="calculo()">Calcular</button>
-        <span id="txtSugerencia"></span>
+        <button onclick="calculo()">Calcular</button><br>
+        <p id="txtSugerencia"></p>
 
 </body>
 </html>
