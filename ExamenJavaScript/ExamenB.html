@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,
+initial-scale=1.0">
+    <title>BOTONERA GODOS</title>
+</head>
+
+<body>
+    <button onclick="llama('godos')">GODOS</button>
+    <button onclick="llama('normandos')">NORMANDOS</button>
+    <div id="botonera"></div>
+    <script>
+
+
+        //AJAX
+
+        const llama = (valor) => {
+
+            let nombres = document.getElementById("botonera");
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let objJSON = this.responseText;
+                    objJSON = JSON.parse(objJSON);
+                  
+                    visualiza(objJSON, nombres);
+                }
+            };
+
+            xhttp.open("GET", "http://localhost/Proyectos/ExamenJavaScript/ExamenB.php?valor=" + valor, true);
+            xhttp.send();
+        }
+
+
+
+
+        /*var newButton = document.createElement("button");
+        newButton.innerHTML = "AMALARICO";
+        let ul = document.createElement("ul");
+        let li = document.createElement("li");
+        ul.appendChild(li)
+        li.appendChild(newButton)
+        document.body.appendChild(ul);
+        Array.isArray(e) // true si e es un array y false en caso contrario.*/
+
+        const visualiza = (arr, obj) => {
+            arr.map(e => {
+                if (Array.isArray(e)) {
+                    let newobj = document.createElement("ul");
+                    obj.appendChild(newobj);
+                    visualiza(e, newobj)
+                } else {
+
+                    let texto = document.createTextNode(e.nombre || e);
+                    nodo.appendChild(texto);
+                    obj.appendChild(nodo);
+
+                }
+                if (e.hijos) {
+                    let newobj = document.createElement("ul");
+                    obj.appendChild(newobj);
+                    visualiza(e, newobj);
+                }
+            })
+        }
+
+
+    </script>
+</body>
+
+</html>

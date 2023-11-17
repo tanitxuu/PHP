@@ -1,24 +1,31 @@
 <?php
-if (isset($_POST["btnNuevoUsuario"])) {
+require "src/ctes_funciones.php";
 
+if (isset($_POST["btnNuevoUsuario"])) {
 
     if (isset($_POST["btnContInsertar"])) // compruebo errores
     {
         $error_nombre = $_POST["nombre"] == "" || strlen($_POST["nombre"]) > 30;
         $error_usuario = $_POST["usuario"] == "" || strlen($_POST["usuario"]) > 20;
-        if (!$error_usuario) {
-            try {
-                $conexion = mysqli_connect("localhost", "jose", "josefa", "bd_cv");
-                mysqli_set_charset($conexion, "utf8");
-            } catch (Exception $e) {
-                die(error_page("Práctica 1º CRUD", "<h1>Práctica 1º CRUD</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
+
+        if(!$error_usuario)
+        {
+            try{
+                $conexion=mysqli_connect("localhost","jose","josefa","bd_foro");
+                mysqli_set_charset($conexion,"utf8");
+            }
+            catch(Exception $e)
+            {
+                die(error_page("Práctica 1º CRUD","<h1>Práctica 1º CRUD</h1><p>No he podido conectarse a la base de batos: ".$e->getMessage()."</p>"));
             }
 
-            $error_usuario = repetido($conexion, "usuarios", "usuario", $_POST["usuario"]);
-
-            if (is_string($error_usuario))
+            $error_usuario=repetido($conexion,"usuarios","usuario",$_POST["usuario"]);
+            
+            if(is_string($error_usuario))
                 die($error_usuario);
+
         }
+
         $error_dni = $_POST["dni"] == "" || !dni_bien_escrito(strtoupper($_POST["dni"])) || !dni_valido(strtoupper($_POST["dni"]));
         $error_clave = $_POST["clave"] == "" || strlen($_POST["clave"]) > 15;
         $error_sexo = !isset($_POST["sexo"]);
@@ -29,36 +36,43 @@ if (isset($_POST["btnNuevoUsuario"])) {
 
         if (!$error_form) {
             try {
-                $consulta = "insert into usuarios (usuario,clave,nombre,dni,sexo,foto) values ('" . $_POST["usuario"] . "','" . $_POST["clave"] . "','" . $_POST["nombre"] . "','" . $_POST["dni"] . "','" . $_POST["sexo"] . "','" . $_FILES["foto"] . "')";
+                $consulta = "insert into usuarios (usuario,clave,nombre,dni,sexo,foto) values ('" . $_POST["usuario"] . "','" . $_POST["clave"] . "','" . $_POST["nombre"] . "','" . $_POST["dni"] . "','" . $_POST["sexo"] . "','" . $_FILES["archivo"] . "')";
                 mysqli_query($conexion, $consulta);
             } catch (Exception $e) {
                 mysqli_close($conexion);
-                die(error_page("Práctica 1º CRUD", "<h1>Práctica 1º CRUD</h1><p>No se ha podido hacer la consulta: " . $e->getMessage() . "</p>"));
+                die("<h1>Práctica 1º CRUD</h1><p>No se ha podido hacer la consulta: " . $e->getMessage() . "</p>");
             }
 
             mysqli_close($conexion);
-
             header("Location:index.php");
             exit;
         }
+        if (isset($conexion))
+            mysqli_close($conexion);
     }
+
 
 ?>
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="es">
 
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <title>Práctica 1º CRUD</title>
+        <style>
+            .error {
+                color: red
+            }
+        </style>
     </head>
 
     <body>
-        <h1>Usuario Nuevo</h1>
-        <form action="index.php" method="post" enctype="multipart/form-data">
+        <h1>Agregar Nuevo Usuario</h1>
+        <form action="index.php" method="post">
             <p>
-                <label for="nombre">Nombre: </label>
-                <input type="text" name="nombre" id="nombre" maxlength="30" value="<?php if (isset($_POST["nombre"])) echo $_POST["nombre"]; ?>">
+                <label for="nombre">Nombre: </label><br />
+                <input type="text" name="nombre" id="nombre" maxlength="30" placeholder="Nombre..." value="<?php if (isset($_POST["nombre"])) echo $_POST["nombre"]; ?>">
                 <?php
                 if (isset($_POST["btnContInsertar"]) && $error_nombre) {
                     if ($_POST["nombre"] == "")
@@ -69,8 +83,8 @@ if (isset($_POST["btnNuevoUsuario"])) {
                 ?>
             </p>
             <p>
-                <label for="usuario">Usuario: </label>
-                <input type="text" name="usuario" id="usuario" maxlength="20" value="<?php if (isset($_POST["usuario"])) echo $_POST["usuario"]; ?>">
+                <label for="usuario">Usuario: </label><br />
+                <input type="text" name="usuario" id="usuario" maxlength="20" placeholder="Usuario..." value="<?php if (isset($_POST["usuario"])) echo $_POST["usuario"]; ?>">
                 <?php
                 if (isset($_POST["btnContInsertar"]) && $error_usuario) {
                     if ($_POST["usuario"] == "")
@@ -83,8 +97,8 @@ if (isset($_POST["btnNuevoUsuario"])) {
                 ?>
             </p>
             <p>
-                <label for="clave">Contraseña: </label>
-                <input type="password" name="clave" maxlength="15" id="clave">
+                <label for="clave">Contraseña: </label><br />
+                <input type="password" name="clave" maxlength="15" placeholder="Contraseña..." id="clave">
                 <?php
                 if (isset($_POST["btnContInsertar"]) && $error_clave) {
                     if ($_POST["clave"] == "")
@@ -95,20 +109,11 @@ if (isset($_POST["btnNuevoUsuario"])) {
                 ?>
             </p>
             <p>
-                <label for="dni">DNI:</label>
-                <input type="text" placeholder="DNI: 12435664Z" name="dni" id="dni" value="<?php if (isset($_POST["dni"])) echo $_POST["dni"]; ?>"><br>
-                <?php
-                if (isset($_POST["btnContInsertar"]) && $error_dni) {
-                    if ($_POST["dni"] == "") {
-                        echo "<span class='error'>Campo vacio </span>";
-                    } elseif (!dni_bien_escrito(strtoupper($_POST["dni"]))) {
-                        echo "<span class='error'>Dni no esta bien escrito </span>";
-                    } else {
-                        echo "<span class='error'>El dni no es valido</span>";
-                    }
-                }
-                ?>
+                <label for="DNI">DNI: </label><br />
+                <input type="text" name="DNI" id="DNI" maxlength="50" placeholder="DNI. 11223344Z" value="<?php if (isset($_POST["DNI"])) echo $_POST["DNI"]; ?>">
+
             </p>
+
             <p>
                 Sexo:
                 <?php
@@ -117,8 +122,8 @@ if (isset($_POST["btnNuevoUsuario"])) {
                 }
                 ?>
                 <br>
-                <input type="radio" name="sexo" id="hombre" value="Hombre" <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "Hombre") echo "checked" ?>>Hombre<br>
-                <input type="radio" name="sexo" id="mujer" value="Mujer" <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "Mujer") echo "checked" ?>>Mujer<br>
+                <input type="radio" name="sexo" id="hombre" value="Hombre" <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "Hombre") echo "checked"; ?>><label for="">Hombre</label><br>
+                <input type="radio" name="sexo" id="mujer" value="Mujer" <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "Mujer") echo "checked"; ?>><label>Mujer</label><br>
             </p>
             <p>
                 <label for="archivo">Seleccione un archivo imagen (Max 500KB):</label>
@@ -137,14 +142,19 @@ if (isset($_POST["btnNuevoUsuario"])) {
                 }
                 ?>
             </p>
-            <p>
-                <button type="submit" name="btnContInsertar">Continuar</button>
-                <button type="submit" name="btnContVolver">Volver</button>
 
+            <p>
+                <button type="submit" name="btnContInsertar">Guardar Cambios</button>
+                <button type="submit">Atras</button>
             </p>
         </form>
+
     </body>
 
     </html>
 <?php
-} ?>
+} else {
+    header("Location:index.php");
+    exit;
+}
+?>

@@ -8,6 +8,7 @@ if(isset($_POST["btnNuevoUsuario"]) || isset($_POST["btnContInsertar"]) )
     {
         $error_nombre=$_POST["nombre"]==""|| strlen($_POST["nombre"])>30;
         $error_usuario=$_POST["usuario"]==""|| strlen($_POST["usuario"])>20;
+        
         if(!$error_usuario)
         {
             try{
