@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <h2>Agregar Nuevo Usuario</h2>
     <form action="index.php" method="post" enctype="multipart/form-data">
         <p>

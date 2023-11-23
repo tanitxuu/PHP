@@ -41,21 +41,6 @@ function repetido($conexion,$tabla,$columna,$valor,$columna_clave=null,$valor_cl
     return $respuesta;
 }
 
-function LetraNIF($dni) 
-{  
-    return substr("TRWAGMYFPDXBNJZSQVHLCKEO", $dni % 23, 1); 
-}
-
-function dni_bien_escrito($texto)
-{
-    return strlen($texto)==9 && is_numeric(substr($texto,0,8)) && substr($texto,-1)>="A" && substr($texto,-1)<="Z";
-}
-
-function dni_valido($texto)
-{
-    return LetraNIF(substr($texto,0,8))==substr($texto,-1);
-}
-
 function tiene_extension($nombre)
 {
     return explode(".",$nombre);
