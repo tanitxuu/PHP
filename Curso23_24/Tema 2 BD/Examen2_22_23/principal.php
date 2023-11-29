@@ -48,7 +48,36 @@ if(isset($_POST["btnCambiarNota"]))
         exit;
     }
 }
+if(isset($_POST["btnCalificar"]))
+{
+    if(!isset($conexion))
+    {
+        try{
+            $conexion=mysqli_connect("localhost","jose","josefa","bd_exam_colegio");
+            mysqli_set_charset($conexion,"utf8");
+        }
+        catch(Exception $e)
+        {    session_destroy();
+            die(error_page("Examen2 DWESE 22-23","<h1>Notas de los Alumnos</h1><p>No se ha podido conectar a la BD: ".$e->getMessage()."</p>"));
+        }
+    }
+    try{
+        $consulta="insert into notas (cod_asig,cod_alu,nota) values ('".$_POST["asignatura"]."','".$_POST["alumno"]."',0)";
+        $resultado=mysqli_query($conexion,$consulta);
+    }
+    catch(Exception $e)
+    {
+       
+        mysqli_close($conexion);
+        session_destroy();
+        die(error_page("Examen2 DWESE 22-23","<h1>Notas de los Alumnos</h1><p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+    }
+    $_SESSION["mensaje"]="Asignatura calificada con un 0,cambiar la calificacion si es necesario";
+    $_SESSION["alumno"]=$_POST["alumno"];
+    header("Location:index.php");
+    exit;
 
+}
 if(isset($_POST["btnBorrarNota"]))
 {
     
@@ -86,6 +115,12 @@ if(isset($_POST["btnBorrarNota"]))
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Examen2 DWESE 22-23</title>
+    <style>
+        .mensaje{
+            color: blue;
+            font-size: 1.5rem;
+        }
+    </style>
 </head>
 <body>
     <h1>Notas de los Alumnos</h1>
@@ -188,7 +223,7 @@ if(isset($_POST["btnBorrarNota"]))
 
             if(isset($_SESSION["mensaje"]))
             {
-                echo "<p class=''>".$_SESSION["mensaje"]."</p>";
+                echo "<p class='mensaje'>".$_SESSION["mensaje"]."</p>";
                 session_destroy();
             }
 
