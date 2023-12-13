@@ -42,7 +42,4 @@ function repetido($conexion,$tabla,$columna,$valor,$columna_clave=null,$valor_cl
 }
 
 ?>
-function tiene_extension($nombre)
-{
-    return explode(".",$nombre);
-}
+
