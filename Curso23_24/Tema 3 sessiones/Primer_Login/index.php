@@ -30,4 +30,4 @@ if(isset($_SESSION["usuario"]))
 else
 {
     require "vistas/vista_login.php";
-}
+}/*/
