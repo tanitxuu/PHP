@@ -1,5 +1,5 @@
 <?php
-class Empleado{
+class Pelicula{
     private $nombre,$sueldo;
 
     public function __construct($nombre_empleado,$sueldo_empleado)

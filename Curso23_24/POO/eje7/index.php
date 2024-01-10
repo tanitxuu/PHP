@@ -8,9 +8,9 @@
 </head>
 
 <body>
-    <h1>Ejercicio 6 POO</h1>
+    <h1>Ejercicio 7 POO</h1>
     <?php
-    require "class_menu.php";
+    require "class_pelicula.php";
 
     $m=new Menu();
     $m->cargar('http://www.marca.com','Marca');
