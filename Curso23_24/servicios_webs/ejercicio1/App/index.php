@@ -23,14 +23,52 @@
         curl_close($llamada);
         return $respuesta;
     }
-    $datos["cod"] = "TNIz";
-    $datos["nombre"] = "TANIAaaaaaaa";
-    $datos["nombre_corto"] = "TANIAz";
-    $datos["descripcion"] = "blablabalblablablasblasblasl";
-    $datos["PVP"] = 24.3;
+    //parte A
+    $url = DIR_SERV . "/productos";
+    $respuesta = consumir_servicios_REST($url, "GET");
+    $obj = json_decode($respuesta);
+    if (!$obj)
+        die("<p>Error consumiendo el servicio: " . $url . "<p>" . $respuesta);
+
+    if (isset($obj->mensaje_error))
+        die("<p>" . $obj->mensaje_error . "<p></body></html>");
+
+    echo "<table>";
+    echo "<tr><th>Cod</th><th>Nombre Corto</th></tr>";
+
+
+    echo "<h1>Nombre ejemplo: ".$obj->productos[0]->nombre_corto."</h1>";
+    echo "<p>El numero de tuplas obtenidas ha sido: ".count($obj->productos)."</p>";
+
+    foreach($obj->productos as $tupla){
+        echo "<tr>";
+        echo "<td>".$tupla->cod."</td>";
+        echo "<td>".$tupla->nombre_corto."</td>";
+        echo "</tr>";
+    }
+
+    echo "</table>";
+
+    //Parte B 
+    $url = DIR_SERV . "/productos/KSTMSDHC8GB";
+    $respuesta = consumir_servicios_REST($url, "GET");
+    $obj = json_decode($respuesta);
+    if (!$obj)
+        die("<p>Error consumiendo el servicio: " . $url . "<p>" . $respuesta);
+
+    if (isset($obj->mensaje_error))
+        die("<p>" . $obj->mensaje_error . "<p></body></html>");
+
+        echo "<h1>Nombre corto de KSTMSDHC8GB es : ".$obj->productos->nombre_corto."</h1>";
+
+   /* $datos["nombre"] = "TAaaniainsda";
+    $datos["nombre_corto"] = "TANIAjdhasjd";
+    $datos["descripcion"] = "blabllasdfjsdkffs";
+    $datos["PVP"] = 25.3;
     $datos["familia"] = "MP3";
 
-    $url = DIR_SERV . "/producto/insertar";
+    //INSERTAR
+    /*$url = DIR_SERV . "/producto/insertar";
     $respuesta = consumir_servicios_REST($url, "post", $datos);
     $obj = json_decode($respuesta);
     if (!$obj)
@@ -39,7 +77,32 @@
     if (isset($obj->mensaje_error))
         die("<p>" . $obj->mensaje_error . "<p></body></html>");
 
-    echo "<p>".$obj->mensaje."</p>";
+    echo "<p>" . $obj->mensaje . "</p>";*/
+
+    //ACTUALIZAR
+   /* $url = DIR_SERV . "/producto/actualizar/" . urlencode("TNIzx");
+    $respuesta = consumir_servicios_REST($url, "put", $datos);
+    $obj = json_decode($respuesta);
+    if (!$obj)
+        die("<p>Error consumiendo el servicio: " . $url . "<p>" . $respuesta);
+
+    if (isset($obj->mensaje_error))
+        die("<p>" . $obj->mensaje_error . "<p></body></html>");
+
+    echo "<p>" . $obj->mensaje . "</p>";
+
+    //DELETE
+    /*   $url = DIR_SERV . "/producto/borrar/" .urlencode("3DSNG");
+      $respuesta = consumir_servicios_REST($url, "delete", $datos);
+       $obj = json_decode($respuesta);
+       if (!$obj)
+           die("<p>Error consumiendo el servicio: " . $url . "<p>" . $respuesta);
+   
+       if (isset($obj->mensaje_error))
+           die("<p>" . $obj->mensaje_error . "<p></body></html>");
+   
+       echo "<p>".$obj->mensaje."</p>";*/
+
 
 
 
