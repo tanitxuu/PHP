@@ -18,7 +18,6 @@ if($_FILES['img']['name']!=''){
         echo "<p><strong>Nombre:</strong>".$_FILES["img"]["name"]."</p>";
         echo "<p><strong>Tipo:</strong>".$_FILES["img"]["type"]."</p>";
         echo "<p><strong>Tamaño:</strong>".$_FILES["img"]["size"]."</p>";
-        echo "<p><strong>Error:</strong>".$_FILES["img"]["error"]."</p>";
         echo "<p>La imagen se ha subido correctamente</p>";
         echo "<p><img class='tam_imag' src='img/".$nombre_nuevo."' alt='Foto' title='Foto' /></p>";
 
