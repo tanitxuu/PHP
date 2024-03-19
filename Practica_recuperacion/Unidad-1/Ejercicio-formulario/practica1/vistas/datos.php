@@ -6,11 +6,7 @@ echo '<p>........</p>';
 if($_FILES['img']['name']!=''){
     $nombre_nuevo=md5(uniqid(uniqid(),true));
     $array_nombre=explode(".",$_FILES["img"]["name"]);
-    $ext="";
-    if(count($array_nombre)>1){
-        $ext=".".end($array_nombre);
-       
-    }
+    $ext=".".strtolower(end($array_nombre));
     $nombre_nuevo.=$ext;
     @$var=move_uploaded_file($_FILES["img"]["tmp_name"],"img/".$nombre_nuevo);
     if($var){
