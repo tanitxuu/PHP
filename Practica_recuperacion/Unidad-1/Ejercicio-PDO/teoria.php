@@ -1,7 +1,11 @@
 <?php
 session_name('teoriaPDO');
 session_start();
-$_SESSION['usuario']='Un usuario';
+//la usaremos para loggearnos cuando hagamos el login
+//$_SESSION['usuario']='Un usuario';
+//session_destroy();
+//borra todas las sessiones creadas
+//session_unset();
 ?>
 <!DOCTYPE html>
 <html lang="en">

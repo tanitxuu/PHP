@@ -12,7 +12,7 @@ function muestraSugerencia(str) {
        document.getElementById("txtSugerencia").innerHTML = this.responseText;
      }
    };
-   xmlhttp.open("GET", "https://localhost/Proyectos/JavaScript/ciudades.php?param=" + str, true);
+   xmlhttp.open("GET", "http://localhost/js/ciudades.php?param=" + str, true);
    // La dirección anterior corresponde a la ubicación de la página php en el servidor localhost
    // Esta dirección podrá diferir dependiendo de la necesidad del programador.
    xmlhttp.send();

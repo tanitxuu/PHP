@@ -19,13 +19,22 @@
             table{border-collapse:collapse;text-align:center;width:90%;margin:0 auto}
             th{background-color:#CCC}
             table img{height:100px;}
-        
+        img{
+            width: 35%;
+            height: auto;
+        }
     </style>
 </head>
 
 <body>
     <h1>Vista Admin</h1>
     <?php
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        session_destroy();
+        die(error_page("Primer Login", "<h1>Primer Login</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
+    }
 
     echo "<div>Bienvenido <form action='index.php' method='post'><button name='btnverusu' class='btn'>".$_SESSION['usuario']."</button></form><form action='index.php' method='post'><button name='btnsalir' class='btn'>Salir</button></form></div>";
     if(isset($_POST['btnnuevousu'])){
@@ -111,9 +120,35 @@
             echo "<p>No se puedo conectar a la bbdd : " . $e->getMessage() . "</p></body></html>";}
     }
     if(isset($_POST['usu'])){
+        try {
+            $consulta = "select * from usuarios where tipo='normal'";
+            $sentencia = $conexion->prepare($consulta);
+            $sentencia->execute();
+        } catch (PDOException $e) {
+            $conexion = null;
+            $sentencia = null;
+            echo "<p>No se puedo conectar a la bbdd : " . $e->getMessage() . "</p></body></html>";
+        }
+        $tuplas = $sentencia->fetch(PDO::FETCH_ASSOC);
+        if($tuplas['subscripcion'] ===1){
+            $datos='Si';
+        }else{
+            $datos='No';
+        }
+        echo "<h2>Datos de usuario</h2>";
+        echo "<p><strong>Nombre: </strong>".$tuplas['nombre']."</p>";
+        echo "<p><strong>Usuario: </strong>".$tuplas['usuario']."</p>";
+        echo "<p><strong>Dni: </strong>".$tuplas['dni']."</p>";
+        echo "<p><strong>Sexo: </strong>".$tuplas['sexo']."</p>";
+        echo "<p><strong>Foto: </strong><br><img src='img/" . $tuplas['foto'] . "'/></p>";
+        echo "<p><strong>Subscripcion: </strong>".$datos."</p>";
+        echo "<p></form><form action='index.php' method='post'><button name='btnsalir' class='btn'>Cerrar</button></form></p>";
         
     }
     if(isset($_POST['btneditar'])){
+        
+    }
+    if(isset($_POST['btnverusu'])){
         
     }
     try {
