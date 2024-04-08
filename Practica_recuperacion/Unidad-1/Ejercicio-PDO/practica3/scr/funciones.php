@@ -34,4 +34,16 @@ function error_page($title,$body)
     </html>';
     return $page;
 }
+function repetido($conexion,$tabla,$columna,$usu){
+    try {
+        $consulta = "select ".$columna." from ".$tabla." where ".$columna."=?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$usu]);
+        $respuesta=$sentencia->rowCount()>0;
+    } catch (PDOException $e) {
+        $respuesta="<p>No he podido conectarse a la consulta: " . $e->getMessage() . "</p>";
+    }
+    $sentencia = null;
+    return $respuesta;
+}
 ?>

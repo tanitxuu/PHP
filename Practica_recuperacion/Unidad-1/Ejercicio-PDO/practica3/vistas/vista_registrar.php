@@ -1,95 +1,193 @@
 <?php
+if (isset($_POST['btnborrar'])) {
+    unset($_POST);
+}
 if (isset($_POST['enviar'])) {
     $error_usu = $_POST['usu'] == '';
+    if (!$error_usu) {
+        try {
+            $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+        } catch (PDOException $e) {
+            session_destroy();
+            die(error_page("Primer Login", "<h1>Primer Login</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
+        }
+        //comprobamos si esta repetido
+        $error_usu = repetido($conexion, 'usuarios', 'usuario', $_POST['usu']);
+        if (is_string($error_usu)) {
+            $conexion = null;
+            die(error_page("Primer Login", "<h1>Primer Login</h1><p>" . $error_usu . "</p>"));
+        }
+    }
     $error_nombre = $_POST['nombre'] == '';
     $error_clave = $_POST['clave'] == '';
     $error_dni = $_POST["dni"] == "" || !dni_bien_escrito(strtoupper($_POST["dni"])) || !dni_valido(strtoupper($_POST["dni"]));
-    //no es obligatorio
-    $error_img = $_FILES["img"]["name"] != '' && ($_FILES["img"]["error"] || !explode('.', $_FILES['img']['name']) || !getimagesize($_FILES["img"]["tmp_name"]) || $_FILES["img"]["size"] > 500 * 1024);
-    $error_sub = isset($_POST['sub']);
+    if (!$error_dni) {
+        if (!isset($conexion)) {
+            try {
+                $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+            } catch (PDOException $e) {
+                session_destroy();
+                die(error_page("Practica Rec 2", "<h1>Practica Rec 2</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
+            }
+        }
 
-    $error_form = $error_clave || $error_dni || $error_nombre || $error_usu || !$error_sub ||  $error_img;
+
+        $error_dni = repetido($conexion, "usuarios", "dni", strtoupper($_POST["dni"]));
+        if (is_string($error_dni)) {
+
+            $conexion = null;
+            session_destroy();
+            die(error_page("Practica Rec 2", "<h1>Practica Rec 2</h1><p>" . $error_dni . "</p>"));
+        }
+    }
+
+    $error_img = $_FILES["img"]["name"] != '' && ($_FILES["img"]["error"] || !explode('.', $_FILES['img']['name']) || !getimagesize($_FILES["img"]["tmp_name"]) || $_FILES["img"]["size"] > 500 * 1024);
+
+    $error_form = $error_clave || $error_dni || $error_nombre || $error_usu  ||  $error_img;
     if (!$error_form) {
         //creo el try de insertar
+        try {
+            if (isset($_POST['sub'])) {
+                $subs = 1;
+            } else {
+                $subs = 0;
+            }
+            $consulta = "insert into usuarios (usuario,nombre,clave,dni,sexo,subscripcion) values (?,?,?,?,?,?)";
+            $sentencia = $conexion->prepare($consulta);
+            $sentencia->execute([$_POST['usu'], $_POST['nombre'], md5($_POST['clave']), strtoupper($_POST['dni']), $_POST['sexo'], $subs]);
+            $sentencia = null;
+        } catch (PDOException $e) {
+            $sentencia = null;
+            $conexion = null;
+            session_destroy();
+            die(error_page("Primer Login", "<h1>Primer Login</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
+        }
+        $mensaje = 'Se ha registrado con exito';
+
+        if ($_FILES["img"]["name"] != '') {
+            $ult_id = $conexion->lastInsertId();
+            $array_ext = explode('.', $_FILES["img"]["name"]);
+            $ext = '.' . end($array_ext);
+            $nombre_nuevo = 'img_' . $ult_id . $ext;
+            @$var = move_uploaded_file($_FILES["img"]["tmp_name"], 'img/' . $nombre_nuevo);
+            if ($var) {
+                try {
+                    $consulta = "update usuarios set foto=? where id_usuario=?";
+                    $sentencia = $conexion->prepare($consulta);
+                    $sentencia->execute([$nombre_nuevo, $ult_id]);
+                    $sentencia = null;
+                } catch (PDOException $e) {
+                    unlink('img/' . $nombre_nuevo);
+                    $sentencia = null;
+                    $conexion = null;
+                    session_destroy();
+                    die(error_page("Primer Login", "<h1>Primer Login</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
+                }
+            } else {
+                $mensaje = 'Se ha registrado con exito pero con la imagen por defecto ya que no se ha podido mover la imagen a la carpeta de destino en el servidor ';
+            }
+        }
+        $conexion = null;
+        $_SESSION['mensaje_registro'] = $mensaje;
+        $_SESSION['usuario'] = $_POST['usu'];
+        $_SESSION['clave'] = md5($_POST['clave']);
+        $_SESSION['ultima_ac'] = time();
         header('Location:index.php');
         exit();
+    }
+    if (isset($conexion)) {
+        $conexion = null;
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrarse</title>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
 </head>
+
 <body>
-    <form action="index.php" method="post"  enctype="multipart/form-data" >
-    <fieldset>
-        <legend>Registrarse</legend>
-        <label for="usu">Usuario:</label><br>
-        <input type="text" name="usu" id="usu" value="<?php if (isset($_POST['usu'])) echo $_POST['usu']; ?>" placeholder="Usuario..."><br>
-        <?php
-        if (isset($_POST['enviar']) && $error_usu) {
-            echo '<span class="error">*Debe rellenar el usuario*</span><br>';
-        }
-        ?>
-        <label for="nombre">Nombre:</label><br>
-        <input type="text" name="nombre" id="nombre" value="<?php if (isset($_POST['nombre'])) echo $_POST['nombre']; ?>" placeholder="Nombre..."><br>
-        <?php
-        if (isset($_POST['enviar']) && $error_nombre) {
-            echo '<span class="error">*Debe rellenar el nombre*</span><br>';
-        }
-        ?>
-        <label for="clave">Contraseña:</label><br>
-        <input type="password" name="clave" id="clave" placeholder="Contraseña..."><br>
-        <?php
-        if (isset($_POST['enviar']) && $error_clave) {
-            echo '<span class="error">*Debe rellenar la contraseña*</span><br>';
-        }
-        ?>
-        <label for="dni">DNI:</label><br>
-        <input type="text" name="dni" id="dni" placeholder="58938556T" value="<?php if (isset($_POST['dni'])) echo $_POST['dni']; ?>"><br>
-        <?php
-        if (isset($_POST['enviar']) && $error_dni) {
-            if ($_POST['dni'] == '') {
-                echo '<span class="error">*Debe rellenar el DNI*</span><br>';
-            } else if (!dni_bien_escrito($_POST['dni'])) {
-                echo '<span class="error">*Los primeros 8 digitos deben ser numeros*</span><br>';
-            } else if (!dni_valido($_POST['dni'])) {
-                echo '<span class="error">*El dni no es valido*</span><br>';
+    <form action="index.php" method="post" enctype="multipart/form-data">
+        <fieldset>
+            <legend>Registrarse</legend>
+            <label for="usu">Usuario:</label><br>
+            <input type="text" name="usu" id="usu" value="<?php if (isset($_POST['usu'])) echo $_POST['usu']; ?>" placeholder="Usuario..."><br>
+            <?php
+            if (isset($_POST['enviar']) && $error_usu) {
+                if ($_POST['usu'] == '')
+                    echo '<span class="error">*Debe rellenar el usuario*</span><br>';
+                else
+                    echo '<span class="error">*Usuario repetido*</span><br>';
             }
-        }
-        ?>
-        <label for="sexo">Sexo:</label><br>
-        <input type="radio" name="sexo" id="h" value="Hombre" <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "hombre") echo "checked"; ?>><label for="h">Hombre</label><br>
-        <input type="radio" name="sexo" id="m" value="Mujer" <?php if (!isset($_POST["sexo"]) || (isset($_POST["sexo"]) && $_POST["sexo"] == "mujer")) echo "checked"; ?>> <label for="m">Mujer</label><br><br>
-        <label for="img">Incluir mi foto (Max. 500KB)</label>
-        <input type="file" name="img" id="img" accept="image/*"><br><br>
-        <?php
-        if (isset($_POST["enviar"]) && $error_img) {
-            if ($_FILES["img"]["name"] != "") {
-                if ($_FILES["img"]["error"]) {
-                    echo "<span class='error'>No se ha podido subir el archivo</span>";
-                } elseif (!explode('.', $_FILES['img']['name'])) {
-                    echo "<span class='error'>El archivo no tiene extension</span>";
-                } elseif (!getimagesize($_FILES["img"]["tmp_name"])) {
-                    echo "<span class='error'>No has selecionado un archivo tipo img</span>";
+            ?>
+            <label for="nombre">Nombre:</label><br>
+            <input type="text" name="nombre" id="nombre" value="<?php if (isset($_POST['nombre'])) echo $_POST['nombre']; ?>" placeholder="Nombre..."><br>
+            <?php
+            if (isset($_POST['enviar']) && $error_nombre) {
+                echo '<span class="error">*Debe rellenar el nombre*</span><br>';
+            }
+            ?>
+            <label for="clave">Contraseña:</label><br>
+            <input type="password" name="clave" id="clave" placeholder="Contraseña..."><br>
+            <?php
+            if (isset($_POST['enviar']) && $error_clave) {
+                echo '<span class="error">*Debe rellenar la contraseña*</span><br>';
+            }
+            ?>
+            <label for="dni">DNI:</label><br>
+            <input type="text" name="dni" id="dni" placeholder="58938556T" value="<?php if (isset($_POST['dni'])) echo $_POST['dni']; ?>"><br>
+            <?php
+
+            if (isset($_POST["enviar"]) && $error_dni) {
+
+                if ($_POST["dni"] == "") {
+
+                    echo "<span class='error'>*Debes rellenar el dni*</<span>";
+                } elseif (!dni_bien_escrito(strtoupper($_POST["dni"]))) {
+
+                    echo "<span class='error'>Debes rellenar el DNI con 8 digitos seguidos de una letra</<span>";
+                } elseif (!dni_valido(strtoupper($_POST["dni"]))) {
+
+                    echo "<span class='error'>El dni no es valido</<span>";
                 } else {
-                    echo "<span class='error'>El archivo supera el tamaño</span>";
+                    echo "<span class='error'>*DNI repetido*</span><br>";
                 }
             }
-        }
-        ?>
-        <input type="checkbox" id="sub" name="sub" <?php if(isset($_POST["sub"])) echo "checked"; ?>>Suscribete al boletin de novedades<br>
-        <?php
-        if (isset($_POST['enviar']) && !isset($_POST['sub'])) {
-            echo '<span class="error">*Marque la casilla*</span><br>';
-        }
-        ?>
-        <button type="submit" name="enviar">Guardar Cambios</button><button type="submit" name="borrar">Atras</button>
 
-    </fieldset>
+            ?>
+            <label for="sexo">Sexo:</label><br>
+            <input type="radio" name="sexo" id="h" value="hombre" <?php if (isset($_POST["sexo"]) && $_POST["sexo"] == "hombre") echo "checked"; ?> checked><label for="h">Hombre</label><br>
+            <input type="radio" name="sexo" id="m" value="mujer" <?php if (!isset($_POST["sexo"]) || (isset($_POST["sexo"]) && $_POST["sexo"] == "mujer")) echo "checked"; ?>> <label for="m">Mujer</label><br><br>
+            <label for="img">Incluir mi foto (Max. 500KB)</label>
+            <input type="file" name="img" id="img" accept="image/*"><br><br>
+            <?php
+            if (isset($_POST["enviar"]) && $error_img) {
+                if ($_FILES["img"]["name"] != "") {
+                    if ($_FILES["img"]["error"]) {
+                        echo "<span class='error'>No se ha podido subir el archivo</span>";
+                    } elseif (!explode('.', $_FILES['img']['name'])) {
+                        echo "<span class='error'>El archivo no tiene extension</span>";
+                    } elseif (!getimagesize($_FILES["img"]["tmp_name"])) {
+                        echo "<span class='error'>No has selecionado un archivo tipo img</span>";
+                    } else {
+                        echo "<span class='error'>El archivo supera el tamaño</span>";
+                    }
+                }
+            }
+            ?>
+            <input type="checkbox" id="sub" name="sub" <?php if (isset($_POST["sub"])) echo "checked"; ?>>Suscribete al boletin de novedades<br>
+            <button type="submit" name="enviar">Guardar Cambios</button><button type="submit" name="btnborrar">Borrar datos</button>
+
+        </fieldset>
     </form>
 </body>
+
 </html>

@@ -15,6 +15,9 @@
             cursor: pointer;
          
         }
+        .mensaje{
+            color: blue;
+        }
     </style>
 </head>
 <body>
@@ -23,7 +26,10 @@
    <?php
   
         echo "<div>Bienvenido <a>".$_SESSION['usuario']."</a> <form action='index.php' method='post'><button name='btnsalir' class='btn'>Salir</button></form></div>";
-   
+   if(isset($_SESSION['mensaje_registro'])){
+    echo '<p class="mensaje">'.$_SESSION['mensaje_registro'].'</p>';
+    unset($_SESSION['mensaje_registro']);
+   }
    ?>
 </body>
 </html>
