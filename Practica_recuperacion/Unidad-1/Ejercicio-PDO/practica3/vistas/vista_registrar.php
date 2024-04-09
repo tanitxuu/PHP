@@ -15,6 +15,7 @@ if (isset($_POST['enviar'])) {
         $error_usu = repetido($conexion, 'usuarios', 'usuario', $_POST['usu']);
         if (is_string($error_usu)) {
             $conexion = null;
+            session_destroy();
             die(error_page("Primer Login", "<h1>Primer Login</h1><p>" . $error_usu . "</p>"));
         }
     }
@@ -52,6 +53,7 @@ if (isset($_POST['enviar'])) {
             } else {
                 $subs = 0;
             }
+            //insertamos sin imagen primero para que se ponga la por defecto
             $consulta = "insert into usuarios (usuario,nombre,clave,dni,sexo,subscripcion) values (?,?,?,?,?,?)";
             $sentencia = $conexion->prepare($consulta);
             $sentencia->execute([$_POST['usu'], $_POST['nombre'], md5($_POST['clave']), strtoupper($_POST['dni']), $_POST['sexo'], $subs]);
@@ -72,16 +74,17 @@ if (isset($_POST['enviar'])) {
             @$var = move_uploaded_file($_FILES["img"]["tmp_name"], 'img/' . $nombre_nuevo);
             if ($var) {
                 try {
+                    //aqui si habia img se la subimos
                     $consulta = "update usuarios set foto=? where id_usuario=?";
                     $sentencia = $conexion->prepare($consulta);
                     $sentencia->execute([$nombre_nuevo, $ult_id]);
                     $sentencia = null;
                 } catch (PDOException $e) {
+                    //para borrar una img
                     unlink('img/' . $nombre_nuevo);
                     $sentencia = null;
                     $conexion = null;
-                    session_destroy();
-                    die(error_page("Primer Login", "<h1>Primer Login</h1><p>No he podido conectarse a la base de batos: " . $e->getMessage() . "</p>"));
+                    $mensaje = 'Se ha registrado con exito pero con la imagen por defecto por un problema en la BD del servidor';
                 }
             } else {
                 $mensaje = 'Se ha registrado con exito pero con la imagen por defecto ya que no se ha podido mover la imagen a la carpeta de destino en el servidor ';

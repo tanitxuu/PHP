@@ -10,17 +10,19 @@ if (isset($_POST['btnsalir'])) {
     exit();
 }
 
-if (isset($_SESSION['usuario'])) {
+if (isset($_SESSION['usuario']) || isset($_POST['btnborrar']) || isset($_POST['enviar']) || isset($_POST['borrar']) || isset($_POST['usu']) || isset($_POST['btnnuevousu']) || isset($_POST['btneditar']) || isset($_POST['btnverusu']) || isset($_POST['si'])) {
     require "scr/seguridad.php";
+   
     if ($datos_usu_log['tipo'] == 'admin') {
         require "vistas/vista_usuarioAdmin.php";
-        session_destroy();
+   
     } else {
         require "vistas/vista_usuarioNormal.php";
-        session_destroy();
+       
     }
+
     $conexion = null;
-} else if (isset($_POST['btnregis']) || isset($_POST['btnborrar']) || isset($_POST['enviar'])  ){
+} elseif (isset($_POST['btnregis']) || isset($_POST['btnborrar']) || isset($_POST['enviar'])){
     require "vistas/vista_registrar.php";
 } else {
     require "vistas/vista_login.php";
