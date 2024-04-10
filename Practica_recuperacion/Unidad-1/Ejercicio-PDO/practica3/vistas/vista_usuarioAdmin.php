@@ -123,10 +123,6 @@ if (isset($_POST['enviar'])) {
             }
         }
         $conexion = null;
-        $_SESSION['mensaje_registro'] = $mensaje;
-        $_SESSION['usuario'] = $_POST['usu'];
-        $_SESSION['clave'] = md5($_POST['clave']);
-        $_SESSION['ultima_ac'] = time();
         header('Location:index.php');
         exit();
     }
