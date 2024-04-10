@@ -5,6 +5,7 @@ define("CLAVE_BD", "josefa");
 define("NOMBRE_BD", "bd_rec_cv");
 
 define('MINUTOS',5);
+define('FOTO_DEFECTO','no_imagen.jpg');
 function LetraNI($dni)
 {
     return substr("TRWAGMYFPDXBNJZSQVHLCKEO", $dni % 23, 1);
