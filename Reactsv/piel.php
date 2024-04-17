@@ -54,13 +54,14 @@ foreach ($fichero as $key => $value) {
 
 // Retroceder el puntero al principio del archivo
 rewind($fd);
-
+echo $contador;
 // Escribir los valores actualizados en el archivo
 ftruncate($fd, 0); // Borramos el contenido anterior
 fputs($fd, "||" . implode("||", $contador));
 
 fclose($fd);
 echo "<p>Contador actualizado con éxito</p>";
+
 ?>
 
 
