@@ -57,6 +57,7 @@ rewind($fd);
 echo $contador;
 // Escribir los valores actualizados en el archivo
 ftruncate($fd, 0); // Borramos el contenido anterior
+
 fputs($fd, "||" . implode("||", $contador));
 
 fclose($fd);
