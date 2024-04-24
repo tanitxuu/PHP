@@ -575,6 +575,7 @@ if (isset($_POST['siborrar'])) {
 
                             <p>
                                 <input type="hidden" name="foto_bd" value='<?php echo $foto; ?>'>
+                                <input type="hidden" name="id_usuario" value='<?php echo $id_usuario; ?>'>
                                 <button type="submit" name="btnContEditar" value='<?php echo $id_usuario; ?>'>Guardar Cambios</button>
                                 <button type="submit" name="btnBorrarEditar" value='<?php echo $id_usuario; ?>'>Borrar los datos introducidos</button>
                             </p>

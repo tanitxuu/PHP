@@ -22,7 +22,7 @@ if (isset($_SESSION['usuario']) || isset($_POST['btnborrar']) || isset($_POST['e
     }
 
     $conexion = null;
-} elseif (isset($_POST['btnregis']) || isset($_POST['btnborrar']) || isset($_POST['enviar'])){
+} elseif (isset($_POST['btnregis']) || isset($_POST['btnEnviar']) || isset($_POST['btnBorrar'])){
     require "vistas/vista_registrar.php";
 } else {
     require "vistas/vista_login.php";
