@@ -3,9 +3,9 @@ header("Access-Control-Allow-Origin: *");
 $_POST = json_decode(file_get_contents("php://input"), true);
 require 'funcion.php';
 try {
-    $consulta = "SELECT * FROM TANIA_productos p INNER JOIN TANIA_categoria c ON p.id_categoria = c.id_categoria WHERE p.id_producto = ?;";
+    $consulta = "select * from TANIA_productos";
     $sentencia = $conexion->prepare($consulta);
-    $sentencia->execute($_POST['categoria']);
+    $sentencia->execute();
 } catch (PDOException $e) {
     $conexion = null;
     $sentencia = null;
