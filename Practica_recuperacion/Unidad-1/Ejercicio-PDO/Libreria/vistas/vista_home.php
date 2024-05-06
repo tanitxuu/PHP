@@ -53,26 +53,7 @@ if(isset($_POST["btnEntrar"]))
 }
 
 ///Consulta para traerse los libros
-try{
-    $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")); 
-}
-catch(PDOException $e){
-    session_destroy();
-    die(error_page("Práctica Rec 2b","<h1>librería</h1><p>Imposible conectar a la BD. Error:".$e->getMessage()."</p>"));
-}
-try{
 
-    $consulta = "select * from libros";
-    $sentencia=$conexion->prepare($consulta);
-    $sentencia->execute();
-    $datos_libros=$sentencia->fetch(PDO::FETCH_ASSOC);
-}
-catch(PDOException $e){
-    $sentencia=null;
-    $conexion=null;
-    session_destroy();
-    die(error_page("Práctica Rec 2b","<h1>librería</h1><p>Imposible realizar la consulta. Error:".$e->getMessage()."</p>"));
-}
 
 ?>
 <!DOCTYPE html>
@@ -125,14 +106,5 @@ catch(PDOException $e){
     ?>
     <h2>Listado de Libros</h2>
     <!-- Aquí se mostrarían los libros de tres en tres -->
-   <?php
-   
-   foreach ($datos_libros as $key=>$value) {
-    echo "<div>
-    <img src='Images/".$value["portada"]."'/> 
-    <p>".$value['titulo']." - ".$value['precio']."€</p>
-    </div>";
-   }
-   ?>
 </body>
 </html>
