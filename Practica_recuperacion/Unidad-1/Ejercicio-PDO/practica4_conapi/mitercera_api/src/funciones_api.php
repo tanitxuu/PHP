@@ -1,5 +1,76 @@
 <?php
 require "src/conf_bd.php";
+//LOGIN
+function login($datos){
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        $respuesta["error_bd"] = "Imposible conectar a la BD. Error:" . $e->getMessage();
+        return $respuesta;
+    }
+    try {
+
+        $consulta = "select * from usuarios where usuario=? and clave=?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute($datos);
+        if($sentencia->rowCount()>0){
+            session_name('API_Pract2_Rec_23_24');
+            session_start();
+    
+            $datos_usu=$sentencia->fetch(PDO::FETCH_ASSOC);
+
+            $respuesta['usuario']=$datos_usu;
+            $respuesta['api_key']=session_id();
+
+            $_SESSION['usuario']=$datos_usu['usuario'];
+            $_SESSION['clave']=$datos_usu['clave'];
+            $_SESSION['tipo']=$datos_usu['tipo'];
+     
+        }else{
+            $respuesta['mensaje']='El usuario no se encuentra en la BD';
+        }
+        $sentencia = null;
+        $conexion = null;
+        return $respuesta;
+    } catch (PDOException $e) {
+        $sentencia = null;
+        $conexion = null;
+        $respuesta["error_bd"] = "Error en la consulta:" . $e->getMessage();
+        return $respuesta;
+    }  
+}
+
+//LOGEADO
+function logeado($datos){
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        $respuesta["error_bd"] = "Imposible conectar a la BD. Error:" . $e->getMessage();
+        return $respuesta;
+    }
+    try {
+
+        $consulta = "select * from usuarios where usuario=? and clave=?";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute($datos);
+        if($sentencia->rowCount()>0){
+
+            $datos_usu=$sentencia->fetch(PDO::FETCH_ASSOC);
+            $respuesta['usuario']=$datos_usu;
+    
+        }else{
+            $respuesta['mensaje']='El usuario no se encuentra en la BD';
+        }
+        $sentencia = null;
+        $conexion = null;
+        return $respuesta;
+    } catch (PDOException $e) {
+        $sentencia = null;
+        $conexion = null;
+        $respuesta["error_bd"] = "Error en la consulta:" . $e->getMessage();
+        return $respuesta;
+    }  
+}
 
 //INSERTAR USUARIO
 function insertar_usu($datos)
