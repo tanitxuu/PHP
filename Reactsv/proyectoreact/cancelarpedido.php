@@ -4,10 +4,12 @@ $_POST = json_decode(file_get_contents("php://input"), true);
 require 'funcion.php';
 $id_pedido=$_POST['id_pedido'];
 try {
-    $consulta = "SELECT p.nombre,p.telefono,p.id_pedido,p.precio,pr.nombre,pp.cantidad FROM TANIA_pedidos_productos pp INNER JOIN TANIA_pedidos p ON p.id_pedido = pp.id_pedidos 
-    INNER JOIN TANIA_productos pr ON pp.id_producto = pr.id_producto WHERE pp.id_pedido = ?;";
+    $consulta = "delete FROM `TANIA_pedidos` WHERE id_pedido=?;";
+    $consulta2 = "delete FROM `TANIA_pedidos_productos` WHERE id_pedido=?;";
     $sentencia = $conexion->prepare($consulta);
+    $sentencia2 = $conexion->prepare($consulta2);
     $sentencia->execute($id_pedido);
+    $sentencia2->execute($id_pedido);
 } catch (PDOException $e) {
     $conexion = null;
     $sentencia = null;
@@ -15,7 +17,7 @@ try {
     die(error_page("Primer Login", "<h1>Primer Login</h1><p>No he podido conectarse a la base de datos: " . $e->getMessage() . "</p>"));
 }
 
-$categorias = $sentencia->fetchAll(PDO::FETCH_ASSOC);
+$categorias = 'Pedido borrado con exito';
 
 echo json_encode($categorias);
 ?>

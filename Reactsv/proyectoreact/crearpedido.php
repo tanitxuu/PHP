@@ -17,7 +17,7 @@ try {
     $ultima_id = $conexion->lastInsertId();
     
     // Crear el array de respuesta
-    $respuesta = array("ult_id" => $ultima_id);
+    $respuesta['ult_id'] = $ultima_id;
 } catch (PDOException $e) {
     $respuesta = array("mensaje" => "No se pudo insertar");
 }
