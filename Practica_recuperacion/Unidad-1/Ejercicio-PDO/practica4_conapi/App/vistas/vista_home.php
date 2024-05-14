@@ -49,7 +49,7 @@ if(isset($_POST["btnEntrar"]))
     </style>
 </head>
 <body>
-    <h1>Práctica Rec 2</h1>
+    <h1>Práctica Rec 3</h1>
     <form action="index.php" method="post">
         <p>
             <label for="usuario">Usuario: </label>

@@ -368,32 +368,37 @@ else
 {
     $ini_pag=($_SESSION["pag"]-1)*$_SESSION["regs_mostrar"];
 
-    try{
+
         
         if($_SESSION["buscar"]=="")
         {
-            $consulta = "SELECT * FROM usuarios WHERE tipo<>'admin'";
-            
+            $respuesta = consumir_servicios_REST(SERVICIOS . "/obtener_usuarios", "GET", $datos_env);
         }   
         else
         {
-            $consulta = "SELECT * FROM usuarios WHERE tipo<>'admin' AND nombre LIKE '%".$_SESSION["buscar"]."%'";
+            $datos_env['buscar']=$_SESSION['buscar'];
+            $respuesta = consumir_servicios_REST(SERVICIOS . "/obtener_usuarios_filtro", "GET", $datos_env);
      
         }
-        $sentencia=$conexion->prepare($consulta);
-        $sentencia->execute();
+        $json = json_decode($respuesta, true);
 
-        
-    }
-    catch(PDOException $e){
-        $sentencia=null;
-        $conexion=null;
-        session_destroy();
-        die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible realizar la consulta. Error:".$e->getMessage()."</p>"));
-    }
+        if (!$json) {
+            session_destroy();
+            die(error_page("Práctica Rec 3", "<h1>Práctica Rec 3</h1><p>Sin respuesta oportuna de la api</p>"));
+        }
+        if (isset($json['error_bd'])) {
+            session_destroy();
+            $respuesta = consumir_servicios_REST(SERVICIOS . "/salir", "POST", $api_key);
+            die(error_page("Práctica Rec 3", "<h1>Práctica Rec 3</h1><p>" . $json['error_bd'] . "</p>"));
+        }
+        if (isset($json['no_auth'])) {
+            session_unset();
+            $_SESSION["seguridad"] = "Usted a dejado de tener acceso a la API.Por favor vuelva a logearse";
+            header("Location:index.php");
+            exit();
+        }
 
-    $total_registros=$sentencia->rowCount();
-    $sentencia=null;
+    $total_registros=count($json['usuarios']);
     $n_pags=ceil($total_registros/$_SESSION["regs_mostrar"]);
 }
 

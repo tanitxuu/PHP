@@ -4,7 +4,6 @@ define("MINUTOS",55);
 
 define("FOTO_DEFECTO","no_imagen.jpg");
 
-define("RECAPTCHA_V3_SECRET_KEY", '6LeclMUpAAAAAEWK6dHXL83DFHFaxFWE9f0LiRV2');
 function consumir_servicios_REST($url,$metodo,$datos=null)
 {
     $llamada=curl_init();

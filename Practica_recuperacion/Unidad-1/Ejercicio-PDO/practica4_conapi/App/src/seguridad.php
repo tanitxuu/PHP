@@ -1,6 +1,6 @@
 <?php
-$api_key['api_key'] = $_SESSION['api_key'];
-$respuesta = consumir_servicios_REST(SERVICIOS . "/logeado", "POST", $api_key);
+$datos_env['api_key'] = $_SESSION['api_key'];
+$respuesta = consumir_servicios_REST(SERVICIOS . "/logeado", "POST", $datos_env);
 $json = json_decode($respuesta, true);
 
 if (!$json) {
@@ -9,6 +9,7 @@ if (!$json) {
 }
 if (isset($json['error_bd'])) {
     session_destroy();
+    $respuesta = consumir_servicios_REST(SERVICIOS . "/salir", "POST", $api_key);
     die(error_page("Práctica Rec 3", "<h1>Práctica Rec 3</h1><p>" . $json['error_bd'] . "</p>"));
 }
 if (isset($json['no_auth'])) {
@@ -19,6 +20,7 @@ if (isset($json['no_auth'])) {
 }
 if (isset($json['mensaje'])) {
     session_unset();
+    $respuesta = consumir_servicios_REST(SERVICIOS . "/salir", "POST", $api_key);
     $_SESSION["seguridad"] = "Usted ya no se encuentra registrado en la BD";
     header("Location:index.php");
     exit();
