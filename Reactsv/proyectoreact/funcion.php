@@ -1,5 +1,4 @@
 <?php
-
 define("SERVIDOR_BD", "qahz656.thematic-learning.com");
 define("USUARIO_BD", "qaiw208");
 define("CLAVE_BD", "1PesetaSpain");
