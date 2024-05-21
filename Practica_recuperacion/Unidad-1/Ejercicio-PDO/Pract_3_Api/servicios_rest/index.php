@@ -43,16 +43,16 @@ $app->post("/logueado",function($request){
     
 });
 
-$app->post("/insertar_usuario",function($request){
+$app->post("/insertar_libro",function($request){
 
-        $datos[]=$request->getParam("nombre");
-        $datos[]=$request->getParam("usuario");
-        $datos[]=$request->getParam("clave");
-        $datos[]=$request->getParam("dni");
-        $datos[]=$request->getParam("sexo");
-        $datos[]=$request->getParam("subscripcion");
+        $datos[]=$request->getParam("referencia");
+        $datos[]=$request->getParam("titulo");
+        $datos[]=$request->getParam("autor");
+        $datos[]=$request->getParam("descripcion");
+        $datos[]=$request->getParam("precio");
 
-        echo json_encode(insertar_usuario($datos));
+
+        echo json_encode(insertar_libro($datos));
   
 });
 

@@ -8,13 +8,13 @@
             .enlinea{display:inline}
             .enlace{border:none;background:none;text-decoration:underline;color:blue;cursor:pointer}
             img{height:200px}
-            p{text-align:center;width:30%;margin-top:2.5%;margin-left:2.5%;float:left}
+            .libros{text-align:center;width:30%;margin-top:2.5%;margin-left:2.5%;float:left}
         
         </style>
     </head>
     <body>
         <h1>Librería</h1>
-        <div>Bienvenido <strong><?php echo $datos_usuario_logueado["lector"];?></strong> - 
+        <div>Bienvenido <strong><?php echo $datos_usuario_log["lector"];?></strong> - 
             <form class='enlinea' action="index.php" method="post">
                 <button class='enlace' type="submit" name="btnSalir">Salir</button>
             </form>

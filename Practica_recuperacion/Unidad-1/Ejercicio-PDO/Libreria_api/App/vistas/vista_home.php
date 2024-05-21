@@ -7,40 +7,34 @@
         $error_form=$error_usuario||$error_clave;
         if(!$error_form)
         {
-            try{
-                $consulta="select * from usuarios where lector='".$_POST["usuario"]."' and clave='".md5($_POST["clave"])."'";
-                $resultado=mysqli_query($conexion,$consulta);
-            }
-            catch(Exception $e)
+            $datos_env["lector"]=$_POST["usuario"];
+            $datos_env["clave"]=md5($_POST["clave"]);
+            $respuesta=consumir_servicios_REST(DIR_SERV."/login","POST",$datos_env);
+            $json=json_decode($respuesta,true);
+            if(!$json)
             {
                 session_destroy();
-                mysqli_close($conexion);
-                die(error_page("Examen3 Curso 23-24","<h1>Librería</h1><p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
+                die(error_page("Práctica Rec 3","<h1>Práctica Rec 3</h1><p>Sin respuesta oportuna de la API</p>"));  
             }
-            
-            if(mysqli_num_rows($resultado)>0)
+            if(isset($json["error_bd"]))
             {
-                $_SESSION["usuario"]=$_POST["usuario"];
-                $_SESSION["clave"]=md5($_POST["clave"]);
-                $_SESSION["ultima_accion"]=time();
-                $datos_usu_log=mysqli_fetch_assoc($resultado);
-                mysqli_free_result($resultado);
-                mysqli_close($conexion);
-
-                if($datos_usu_log["tipo"]=="normal")
-                {
-                    header("Location:index.php");
-                }
-                else
-                {
-                    header("Location:admin/gest_libros.php");
-                }
+                session_destroy();
+                die(error_page("Práctica Rec 3","<h1>Práctica Rec 3</h1><p>".$json["error_bd"]."</p>"));
+            }
+    
+            if(isset($json["usuario"]))
+            {
+                $_SESSION["usuario"]=$json["usuario"]["lector"];
+                $_SESSION["clave"]=$json["usuario"]["clave"];
+                $_SESSION["ultm_accion"]=time();
+                $_SESSION["api_key"]=$json["api_key"];
+    
+                header("Location:index.php");
                 exit();
             }
             else
                 $error_usuario=true;
-         
-            mysqli_free_result($resultado);
+    
         }
 
     }
@@ -55,7 +49,7 @@
         <title>Examen3 Curso 23-24</title>
         <style>
             img{height:200px}
-            p.libros{text-align:center;width:30%;margin-top:2.5%;margin-left:2.5%;float:left}
+            div.libros{text-align:center;width:30%;margin-top:2.5%;margin-left:2.5%;float:left}
         </style>
     </head>
     <body>

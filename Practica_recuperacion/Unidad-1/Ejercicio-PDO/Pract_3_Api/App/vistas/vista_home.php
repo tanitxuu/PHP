@@ -23,7 +23,7 @@ if(isset($_POST["btnEntrar"]))
 
         if(isset($json["usuario"]))
         {
-            $_SESSION["usuario"]=$json["usuario"]["usuario"];
+            $_SESSION["usuario"]=$json["usuario"]["lector"];
             $_SESSION["clave"]=$json["usuario"]["clave"];
             $_SESSION["ultm_accion"]=time();
             $_SESSION["api_key"]=$json["api_key"];
