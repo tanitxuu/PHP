@@ -67,7 +67,7 @@ if (isset($_POST["btnAgregar"])) {
         if ($_FILES["portada"]["name"] != "") {
 
             $array_ext=explode(".", $_FILES["portada"]["name"]);
-            $ext = ".".end($array_nombre);
+            $ext = ".".end($array_ext);
             $nombre_nuevo = "img_" . $_POST["referencia"] . $ext;
             @$var = move_uploaded_file($_FILES["portada"]["tmp_name"], "../img/" . $nombre_nuevo);
             if ($var) {
@@ -352,7 +352,7 @@ if (isset($_POST["btnBorrar"])) {
                  echo "<br>¿Estás seguro?<br>";
                  echo "<button type='submit' name='btnContBorrarFoto'>Sí</button> <button type='submit' name='btnNoBorrarFoto'>No</button>";
              }
-             elseif($portada!=FOTO_DEFECTO)
+             elseif($porta!=FOTO_DEFECTO)
              {
                  echo "<br><button name='btnBorrarFoto' type='submit'>Borrar Foto</button>";
              }

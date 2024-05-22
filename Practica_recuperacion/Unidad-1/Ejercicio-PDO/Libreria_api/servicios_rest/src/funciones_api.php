@@ -349,7 +349,7 @@ function obtener_detalles_libro($referencia)
         $consulta="select * from libros where referencia=?";
         $sentencia=$conexion->prepare($consulta);
         $sentencia->execute([$referencia]);
-        $respuesta["libro"]=$sentencia->fetch(PDO::FETCH_ASSOC);//Devuelve false si no tiene
+        $respuesta["usuario"]=$sentencia->fetch(PDO::FETCH_ASSOC);//Devuelve false si no tiene
         $sentencia=null;
         $conexion=null;
         return $respuesta;
