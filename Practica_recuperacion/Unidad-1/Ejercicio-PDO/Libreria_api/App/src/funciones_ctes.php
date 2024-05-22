@@ -7,6 +7,7 @@ define("CLAVE_BD","josefa");
 define("NOMBRE_BD","bd_libreria_exam");
 
 define("DIR_SERV","http://localhost/Proyectos/Practica_recuperacion/Unidad-1/Ejercicio-PDO/Libreria_api/servicios_rest");
+define("FOTO_DEFECTO","no_imagen.jpg");
 
 
 function error_page($title,$body)
