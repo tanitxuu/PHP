@@ -113,7 +113,7 @@ function usuario($id){
     $conexion=null;
     return $respuesta;
 }
-function usuario($datos){
+function usuarioGuardia($datos){
     try{
         $conexion= new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES 'utf8'"));
         
@@ -124,7 +124,7 @@ function usuario($datos){
     }
 
     try{
-        $consulta="select * from usuarios where dia=? and";
+        $consulta="SELECT * FROM `horario_lectivo` INNER JOIN usuarios ON horario_lectivo.usuario=usuarios.id_usuario where dia=? and hora=?";
         $sentencia=$conexion->prepare($consulta);
         $sentencia->execute([$datos]);
 

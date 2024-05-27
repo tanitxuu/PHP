@@ -52,7 +52,7 @@ switch ($dia_hoy) {
     </div>
     <p>Hoy es <strong><?php echo $dia_hoy ?></strong></p>
     <table>
-        <tr><th>Hora</th><th>Profesor de guardia</th></tr>
+        <tr><th>Hora</th><th>Profesor de guardia</th><th>Informacion del Profesor con id: <?php echo $datos_usuario_log["id_usuario"]?></th></tr>
     <?php
 
     ?>
