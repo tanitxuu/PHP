@@ -113,7 +113,7 @@ function usuario($id){
     $conexion=null;
     return $respuesta;
 }
-function usuarioGuardia($datos){
+function usuarioGuardia($dia,$hora){
     try{
         $conexion= new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES 'utf8'"));
         
@@ -124,9 +124,12 @@ function usuarioGuardia($datos){
     }
 
     try{
-        $consulta="SELECT * FROM `horario_lectivo` INNER JOIN usuarios ON horario_lectivo.usuario=usuarios.id_usuario where dia=? and hora=?";
+        $consulta="SELECT hl.dia,hl.hora,u.nombre,u.usuario,u.email,u.id_usuario FROM horario_lectivo hl 
+        INNER JOIN usuarios u ON hl.usuario=u.id_usuario 
+        INNER JOIN grupos g ON hl.grupo=g.id_grupo 
+        where dia=? and hora=? and g.nombre='GUARD'; ";
         $sentencia=$conexion->prepare($consulta);
-        $sentencia->execute([$datos]);
+        $sentencia->execute([$dia,$hora]);
 
     }
     catch(PDOException $e){
@@ -136,12 +139,10 @@ function usuarioGuardia($datos){
         $conexion=null;
         return $respuesta;
     }
-    if($sentencia->rowCount()>0)
-    {
-    $respuesta["usuario"]=$sentencia->fetch(PDO::FETCH_ASSOC);
-    }else{
-    $respuesta["mensaje"]="Usuario no se encuentra regis. en la BD";
-    }
+ 
+    //no olvidar el all para cuando es mas de una informacion
+    $respuesta["usuarios"]=$sentencia->fetchAll(PDO::FETCH_ASSOC);
+    
     $sentencia=null;
     $conexion=null;
     return $respuesta;
