@@ -128,7 +128,14 @@ if(isset($_POST['btnDetalles'])){
     <?php
     echo "<table>";
     
-    echo " <tr><th>Hora</th><th>Profesor de guardia</th><th>Informacion del Profesor con id: ".$_POST["btnDetalles"]." </th></tr>";
+    echo "<tr><th>Hora</th><th>Profesor de guardia</th>";
+    if(isset($_POST['btnDetalles'])){
+        echo "<th>Informacion del Profesor con id: ".$_POST["btnDetalles"]." </th>";
+    }else{
+        echo "<th>Informacion del Profesor con id:  </th>";
+    }
+  
+    echo "</tr>";
 
     for ($hora = 1; $hora <= count($horas); $hora++) {
         if ($hora != 4) {
