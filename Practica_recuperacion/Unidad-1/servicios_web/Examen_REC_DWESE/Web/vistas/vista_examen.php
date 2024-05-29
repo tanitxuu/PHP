@@ -22,6 +22,7 @@ switch ($dia_hoy) {
         $dia_hoy = "Viernes";
         break;
 }
+
 $horas[1] = "8:15-9:15";
 $horas[2] = "9:15-10:15";
 $horas[3] = "10:15-11:15";
@@ -29,6 +30,7 @@ $horas[4] = "11:15-11:45";
 $horas[5] = "11:45-12:45";
 $horas[6] = "12:45-13:45";
 $horas[7] = "13:45-14:45";
+
 for ($hora = 1; $hora <= count($horas); $hora++) {
     if ($hora != 4) {
         $respuesta = consumir_servicios_REST(SERV_WEB . "/usuariosGuardia/" . $dia . "/" . $hora, "GET", $datos_env);
@@ -53,9 +55,10 @@ for ($hora = 1; $hora <= count($horas); $hora++) {
         $profesores_guardia[$hora] = $json['usuarios'];
     }
 }
-if(isset($_POST['btnDetalles'])){
-    
-    $respuesta = consumir_servicios_REST(SERV_WEB . "/usuario/" . $_POST["btnDetalles"] , "GET", $datos_env);
+
+if (isset($_POST['btnDetalles'])) {
+
+    $respuesta = consumir_servicios_REST(SERV_WEB . "/usuario/" . $_POST["btnDetalles"], "GET", $datos_env);
     $json = json_decode($respuesta, true);
     if (!$json) {
         session_destroy();
@@ -74,7 +77,7 @@ if(isset($_POST['btnDetalles'])){
         header("Location:index.php");
         exit();
     }
-    $profesor_detalles[] = $json['usuario'];
+    $profesor_detalles = $json['usuario'];
 }
 
 
@@ -103,7 +106,7 @@ if(isset($_POST['btnDetalles'])){
 
         table {
             border-collapse: collapse;
-            width: 80%;
+            width: 50%;
         }
 
         table,
@@ -111,10 +114,17 @@ if(isset($_POST['btnDetalles'])){
         td {
             border: 1px solid black;
             text-align: center;
+            padding: 0 1rem;
+        }
+        #izq{
+            text-align: left;
+          
+           
         }
 
         th {
-            background-color: #CCC
+            background-color: #CCC;
+            text-align: center;
         }
     </style>
 </head>
@@ -127,14 +137,14 @@ if(isset($_POST['btnDetalles'])){
     <p>Hoy es <strong><?php echo $dia_hoy ?></strong></p>
     <?php
     echo "<table>";
-    
+
     echo "<tr><th>Hora</th><th>Profesor de guardia</th>";
-    if(isset($_POST['btnDetalles'])){
-        echo "<th>Informacion del Profesor con id: ".$_POST["btnDetalles"]." </th>";
-    }else{
+    if (isset($_POST['btnDetalles'])) {
+        echo "<th>Informacion del Profesor con id: " . $_POST["btnDetalles"] . " </th>";
+    } else {
         echo "<th>Informacion del Profesor con id:  </th>";
     }
-  
+
     echo "</tr>";
 
     for ($hora = 1; $hora <= count($horas); $hora++) {
@@ -150,16 +160,23 @@ if(isset($_POST['btnDetalles'])){
             echo "</ol>";
             echo "</form>";
             echo "</td>";
-            echo "<td>";
-                if(isset($_POST['btnDetalles']) && $hora==1){
-                    foreach ($profesor_detalles as $tuplas) {
-                    echo "<p>Nombre: ".$tuplas['nombre']."</p>";
-                    echo "<p>Usuario: ".$tuplas['usuario']."</p>";
-                    echo "<p>Clave: </p>";
-                    echo "<p>Email: Email no disponible</p>";
+            echo "<td id='izq'>";
+
+            if (isset($_POST['btnDetalles']) && $hora == 1) {
+             
+                    echo "<p><strong>Nombre:</strong> " . $profesor_detalles['nombre'] . "</p>";
+                    echo "<p><strong>Usuario:</strong> " . $profesor_detalles['usuario'] . "</p>";
+                    echo "<p><strong>Clave:</strong> </p>";
+                    echo "<div><strong>Email:</strong>";
+                    if(isset($profesor_detalles["email"])){
+                        echo $profesor_detalles['email'];
+                    }else{
+                        echo "Email no desponible";
                     }
-                }
-           
+                    echo "</div>";
+            
+            }
+
             echo "</td>";
             echo "</tr>";
         }
