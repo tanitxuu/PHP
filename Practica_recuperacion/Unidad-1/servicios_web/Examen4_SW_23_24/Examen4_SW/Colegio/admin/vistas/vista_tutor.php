@@ -1,24 +1,66 @@
 <?php
-if(isset($_POST['borrar'])){
-    $alumno_id =  $_POST['alumno_id'];
-    $datos_env['cod_asig']=$_POST['cod_asig'];
+if (isset($_POST['borrar'])) {
+    $alumno_id = $_POST['alumno_id'];
+    $datos_env['cod_asig'] = $_POST['cod_asig'];
     $respuesta = consumir_servicios_REST(DIR_SERV . "/quitarNota/" . $alumno_id, "DELETE", $datos_env);
     $json = json_decode($respuesta, true);
-    if(!$json){
+    if (!$json) {
         session_destroy();
-        die(error_page("Examen colegio","<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+        die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
     }
-    if(isset($json['error'])){
+    if (isset($json['error'])) {
         session_destroy();
-        consumir_servicios_REST(DIR_SERV."/salir","POST",$datos_env);
-        die(error_page("Examen colegio","<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+        consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
+        die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
     }
-    if(isset($json['mensaje'])){
-        $mensaje="Asignatura descalificada con exito";
+    if (isset($json['mensaje'])) {
+        $mensaje = "¡Asignatura descalificada con exito!";
     }
 
 
 }
+if (isset($_POST['calificar'])) {
+    $alumno_id = $_POST['alumno_id'];
+    $datos_env['cod_asig'] = $_POST['cod_asig'];
+    $respuesta = consumir_servicios_REST(DIR_SERV . "/ponerNota/" . $alumno_id, "DELETE", $datos_env);
+    $json = json_decode($respuesta, true);
+    if (!$json) {
+        session_destroy();
+        die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+    }
+    if (isset($json['error'])) {
+        session_destroy();
+        consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
+        die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+    }
+    if (isset($json['mensaje'])) {
+        $mensaje = "¡Asignatura calificada con 0 presione editar para cambiar la nota!";
+    }
+
+}
+if (isset($_POST['editarcambios'])) {
+    $error_nota = $_POST['notaeditar'] == '' || !is_numeric(($_POST['notaeditar'])) || $_POST['notaeditar'] < 0;
+    if (!$error_nota) {
+        $alumno_id = $_POST['alumno_id'];
+        $datos_env['cod_asig'] = $_POST['cod_asig'];
+        $datos_env['nota'] = $_POST['notaeditar'];
+        $respuesta = consumir_servicios_REST(DIR_SERV . "/cambiarNota/" . $alumno_id, "PUT", $datos_env);
+        $json = json_decode($respuesta, true);
+        if (!$json) {
+            session_destroy();
+            die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+        }
+        if (isset($json['error'])) {
+            session_destroy();
+            consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
+            die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+        }
+        if (isset($json['mensaje'])) {
+            $mensaje = "¡Nota cambiada con exito!";
+        }
+    }
+}
+
 $respuesta = consumir_servicios_REST(DIR_SERV . "/alumnos", "GET", $datos_env);
 $json = json_decode($respuesta, true);
 
@@ -38,6 +80,7 @@ $alumnos = $json["alumnos"];
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,11 +93,17 @@ $alumnos = $json["alumnos"];
             cursor: pointer;
             display: inline;
         }
+
         .linea {
             display: inline;
         }
+
+        .mensaje {
+            color: blue;
+        }
     </style>
 </head>
+
 <body>
     <h1>Notas de los alumnos</h1>
     <div>
@@ -74,9 +123,9 @@ $alumnos = $json["alumnos"];
         </form>
     </div>
 
-    <?php 
-    if (isset($_POST['btnselect']) || isset($_POST['editar']) ||isset($_POST['borrar']) || isset($_POST['calificar']) || isset($_POST['editarcambios'])) {
-        $alumno_id =  $_POST['alumno_id'];
+    <?php
+    if (isset($_POST['btnselect']) || isset($_POST['editar']) || isset($_POST['borrar']) || isset($_POST['calificar']) || isset($_POST['editarcambios'])) {
+        $alumno_id = $_POST['alumno_id'];
 
         foreach ($alumnos as $alumno) {
             if ($alumno['cod_usu'] == $alumno_id) {
@@ -102,67 +151,82 @@ $alumnos = $json["alumnos"];
 
         $notas = $json["notas"];
         $notasNO = $json2['notas'];
-    ?>
+        ?>
 
         <h3>Notas del Alumno <strong><?php echo $nombre_alumno; ?></strong></h3>
         <table>
-            <tr><th>Asignaturas</th><th>Nota</th><th>Acción</th></tr>
-            <?php 
+            <tr>
+                <th>Asignaturas</th>
+                <th>Nota</th>
+                <th>Acción</th>
+            </tr>
+            <?php
             foreach ($notas as $nota) {
 
-            ?>
+                ?>
                 <tr>
                     <td><?php echo $nota['denominacion']; ?></td>
                     <td>
-                        <?php if (isset($_POST['editar']) && $nota['cod_asig']==$_POST['cod_asig']) { ?>
+                        <?php if (isset($_POST['editar']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST['editarcambios'])) { ?>
                             <form action="index.php" method="post" class="linea">
-                                <input type="text" name="notaeditar" value='<?php echo $nota['nota']; ?>'/>
-                                
-                                <input type="hidden" name="alumno_id" value='<?php echo $alumno_id; ?>'/>
-                                <input type="hidden" name="nota_id" value='<?php echo $nota['cod_usu']; ?>'/>
+                                <input type="text" name="notaeditar" value='<?php echo $nota['nota']; ?>' />
+                                <?php
+                                if (isset($_POST['editarcambios']) && $error_nota) {
+                                    echo "<span class='mensaje'>*Nota no valida*</span>";
+                                }
+                                ?>
+                                <input type="hidden" name="alumno_id" value='<?php echo $alumno_id; ?>' />
+                                <input type="hidden" name="nota_id" value='<?php echo $nota['cod_usu']; ?>' />
                             </form>
                         <?php } else { ?>
                             <?php echo $nota['nota']; ?>
                         <?php } ?>
                     </td>
                     <td>
-                        <form action="index.php" method="post">
-                        <?php if (isset($_POST['editar']) && $nota['cod_asig']==$_POST['cod_asig']) { ?>
-                            <button name="editarcambios" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Cambiar</button>-
-                            <button name="atras" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Borrar</button>
-                        <?php } else { ?>
-                            <button name="editar" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Editar</button>-
-                            <button name="borrar" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Borrar</button>
-                            <input type="hidden" name="alumno_id" value="<?php echo $alumno_id; ?>"/>
-                            <input type="hidden" name="cod_asig" value="<?php echo $nota['cod_asig']; ?>"/>
-                        <?php } ?>
+                      
+                            <?php if (isset($_POST['editar']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST['editarcambios'])) { ?>
+                                <button name="editarcambios" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Cambiar</button>-
+                                <button name="atras" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Atras</button>
+                                <input type="hidden" name="alumno_id" value="<?php echo $alumno_id; ?>" />
+                                <input type="hidden" name="cod_asig" value="<?php echo $nota['cod_asig']; ?>" />
+                            <?php } else { ?>
+                                <form action="index.php" method="post">
+                                <button name="editar" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Editar</button>-
+                                <button name="borrar" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Borrar</button>
+                                <input type="hidden" name="alumno_id" value="<?php echo $alumno_id; ?>" />
+                                <input type="hidden" name="cod_asig" value="<?php echo $nota['cod_asig']; ?>" />
+                            <?php } ?>
                         </form>
                     </td>
                 </tr>
-            <?php 
+            <?php
             }
             ?>
         </table>
-        <p>  <?php 
-        if(isset($mensje))
+        <p class="mensaje"> <?php
+        if (isset($mensaje))
             echo $mensaje;
-            ?></p>
+        ?></p>
         <div>
-        <form method="post" action="index.php">
-            <p class="linea">Asignaturas que a <strong><?php echo $nombre_alumno; ?> </strong> aun le quedan por calificar:</p>
-            <select name="ponernotas">
-                <?php
-                foreach ($notasNO as $nota) {
-                    echo "<option value='" . $nota['cod_asig'] . "'>" . $nota['denominacion'] . "</option>";
-                }
-                ?>
-            </select>
-            <button name="calificar">Calificar</button>
-        </form>
+            <form method="post" action="index.php">
+                <p class="linea">Asignaturas que a <strong><?php echo $nombre_alumno; ?> </strong> aun le quedan por
+                    calificar:</p>
+                <select name="cod_asig">
+                    <?php
+                    foreach ($notasNO as $nota) {
+                        echo "<option value='" . $nota['cod_asig'] . "'>" . $nota['denominacion'] . "</option>";
+                    }
+                    ?>
+                </select>
+                <button name="calificar">Calificar</button>
+                <input type="hidden" name="alumno_id" value="<?php echo $_POST['alumno_id'];
+                ; ?>" />
+            </form>
         </div>
 
-    <?php 
+    <?php
     }
     ?>
 </body>
+
 </html>

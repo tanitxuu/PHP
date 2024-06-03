@@ -176,7 +176,7 @@ function poner_nota($cod_alu,$cod_asig){
     }
     
     try {
-        $consulta = "insert INTO `notas`(cod_asig, cod_usu, nota) VALUES (?,?,0)";
+        $consulta = "insert INTO notas (cod_asig, cod_usu, nota) VALUES (?,?,0)";
         $sentencia = $conexion->prepare($consulta);
         $sentencia->execute([$cod_alu,$cod_alu]);
         $respuesta['mensaje'] = "Asignatura calificada con éxito";
@@ -188,5 +188,26 @@ function poner_nota($cod_alu,$cod_asig){
     $sentencia = null;
     return $respuesta;
 }
-//SELECT u.cod_usu, u.nombre AS nombre_usuario, a.cod_asig, a.denominacion AS nombre_asignatura FROM notas n INNER JOIN asignaturas a ON n.cod_asig=a.cod_asig INNER JOIN usuarios u ON n.cod_usu = u.cod_usu WHERE n.nota IS NULL;
+function editar_notas($cod_alu,$cod_asig,$nota){
+    try {
+        $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+    } catch (PDOException $e) {
+        $respuesta["error"] = "Imposible conectar: " . $e->getMessage();
+        return $respuesta;
+    }
+    
+    try {
+        $consulta = "update notas SET nota=? WHERE cod_usu=? and cod_asig=?;";
+        $sentencia = $conexion->prepare($consulta);
+        $sentencia->execute([$nota,$cod_alu,$cod_alu]);
+        $respuesta['mensaje'] = "Asignatura cambiada con éxito";
+    } catch (PDOException $e) {
+        $respuesta["error"] = "Error en la consulta: " . $e->getMessage();
+    }
+    
+    $conexion = null;
+    $sentencia = null;
+    return $respuesta;
+}
+//UPDATE notas SET nota=1 WHERE cod_asig=1 and cod_usu=1;
 ?>

@@ -151,10 +151,7 @@ if(isset($_POST["btnEnviar"]))
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Práctica Rec 2</title>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
- 
-	<!-- Cambia 6Lc9nL8pAAAAAHj8FwPy0B9c03b9tgdxAM4X-5Me por tu clave de sitio web -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6LeclMUpAAAAAPfmd9Phvk7tVUJtev9C6UY7CMH_"></script>
+    
     <style>
         .error{color:red}
     </style>
@@ -239,36 +236,12 @@ if(isset($_POST["btnEnviar"]))
         </p>
         <p>
             
-            <button type="submit" data-destino="enviar" name="btnEnviar">Guardar Cambios</button>
-            <button type="submit" data-destino="borrar" name="btnBorrar">Borrar los datos introducidos</button>
+            <button type="submit"  name="btnEnviar">Guardar Cambios</button>
+            <button type="submit" name="btnBorrar">Borrar los datos introducidos</button>
         </p>
 
-        <?php 
-            if(isset($_POST["btnEnviar"]) && $error_captcha)
-                echo "<p><span class='error'> Según Google Recaptcha, el registo lo está haciendo un robots. Por favor, vuelva a intentarlo.</span></p>";
-        ?>
+       
     </form>
-    <script>
-        //Cómo tengo dos botones que hacen submit tengo que ver cual de ellos es el que lo provoca ya que sólo uno de ellos necesita recaptcha (enviar)
-        var button_enviar;
-        $("button").click(function(){
-            button_enviar=$(this).data('destino') == 'enviar';
-        })
-        $('#form').submit(function(event) {
-            if(button_enviar)
-            {
-                event.preventDefault();
-                /*Cambia 6Lc9nL8pAAAAAHj8FwPy0B9c03b9tgdxAM4X-5Me por tu clave de sitio web*/
-                grecaptcha.ready(function() {
-                    grecaptcha.execute('6LeclMUpAAAAAPfmd9Phvk7tVUJtev9C6UY7CMH_', {action: 'registro'}).then(function(token) {
-                        $('#form').prepend('<input type="hidden" name="token" value="' + token + '">');
-                        $('#form').prepend('<input type="hidden" name="action" value="registro">');
-                        $('#form').prepend('<input type="hidden" name="btnEnviar">');//Al hacer el event.preventDefault() el $_POST[btnEnviar] se pierde
-                        $('#form').unbind('submit').submit();
-                    });
-                });
-            }
-        });
-  </script>
+
 </body>
 </html>
