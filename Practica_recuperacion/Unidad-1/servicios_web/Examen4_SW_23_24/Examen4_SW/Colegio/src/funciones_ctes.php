@@ -1,4 +1,6 @@
 <?php
+define("DIR_SERV","http://localhost/Proyectos/Practica_recuperacion/Unidad-1/servicios_web/Examen4_SW_23_24/Examen4_SW/servicios_rest");
+define("MINUTOS",15);
 function consumir_servicios_REST($url,$metodo,$datos=null)
 {
     $llamada=curl_init();
@@ -21,6 +23,5 @@ function error_page($title,$body)
 }
 
 
-define("DIR_SERV","http://localhost/Proyectos/Examen4_SW/servicios_rest");
-define("MINUTOS",15);
+
 ?>

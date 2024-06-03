@@ -1,32 +1,28 @@
 <?php
-session_name("Examen4_SW_23_24");
+session_name('Examen_colegio');
 session_start();
 
 require "src/funciones_ctes.php";
 
-if(isset($_POST["btnSalir"]))
-{
-    $datos["api_session"]=$_SESSION["api_session"];
-    consumir_servicios_REST(DIR_SERV."/salir","POST",$datos);
-    session_destroy();
+if (isset($_POST['salir'])) {
+    $datos_env['api_session'] = $_SESSION['api_session'];
+    consumir_servicios_REST(DIR_SERV . '/salir', 'POST', $datos_env);
+    session_unset();
     header("Location:index.php");
-    exit;
+    exit();
 }
 
-if(isset($_SESSION["usuario"]))
-{
+if (isset($_SESSION['usuario'])) {
+    $salto = 'index.php';
     require "src/seguridad.php";
 
-    if($datos_usuario_log['tipo']=="alumno")
-        require "vistas/vista_normal.php";
-    else
-    {
+    if ($datos_usuario_log['tipo'] == 'tutor') {
+
         header("Location:admin/index.php");
-        exit;
+        exit();
+    } else {
+        require "vistas/vista_normal.php";
     }
-}
-else
-{
+} else {
     require "vistas/vista_home.php";
 }
-?>

@@ -1,4 +1,24 @@
 <?php
+if(isset($_POST['borrar'])){
+    $alumno_id =  $_POST['alumno_id'];
+    $datos_env['cod_asig']=$_POST['cod_asig'];
+    $respuesta = consumir_servicios_REST(DIR_SERV . "/quitarNota/" . $alumno_id, "DELETE", $datos_env);
+    $json = json_decode($respuesta, true);
+    if(!$json){
+        session_destroy();
+        die(error_page("Examen colegio","<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+    }
+    if(isset($json['error'])){
+        session_destroy();
+        consumir_servicios_REST(DIR_SERV."/salir","POST",$datos_env);
+        die(error_page("Examen colegio","<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+    }
+    if(isset($json['mensaje'])){
+        $mensaje="Asignatura descalificada con exito";
+    }
+
+
+}
 $respuesta = consumir_servicios_REST(DIR_SERV . "/alumnos", "GET", $datos_env);
 $json = json_decode($respuesta, true);
 
@@ -13,6 +33,7 @@ if (isset($json['error'])) {
 }
 
 $alumnos = $json["alumnos"];
+
 ?>
 
 <!DOCTYPE html>
@@ -37,7 +58,7 @@ $alumnos = $json["alumnos"];
 <body>
     <h1>Notas de los alumnos</h1>
     <div>
-        <p class="linea">Bienvenido <strong><?php echo $_SESSION['usuario']; ?></strong> -
+        <p class="linea">Bienvenido <strong><?php echo $datos_usuario_log['usuario']; ?></strong> -
         <form method="post" action="index.php" class="linea"><button name="salir" class="enlace">Salir</button></form>
         </p>
         <form method="post" action="index.php">
@@ -54,7 +75,7 @@ $alumnos = $json["alumnos"];
     </div>
 
     <?php 
-    if (isset($_POST['btnselect']) || isset($_POST['editar'])) {
+    if (isset($_POST['btnselect']) || isset($_POST['editar']) ||isset($_POST['borrar']) || isset($_POST['calificar']) || isset($_POST['editarcambios'])) {
         $alumno_id =  $_POST['alumno_id'];
 
         foreach ($alumnos as $alumno) {
@@ -96,6 +117,7 @@ $alumnos = $json["alumnos"];
                         <?php if (isset($_POST['editar']) && $nota['cod_asig']==$_POST['cod_asig']) { ?>
                             <form action="index.php" method="post" class="linea">
                                 <input type="text" name="notaeditar" value='<?php echo $nota['nota']; ?>'/>
+                                
                                 <input type="hidden" name="alumno_id" value='<?php echo $alumno_id; ?>'/>
                                 <input type="hidden" name="nota_id" value='<?php echo $nota['cod_usu']; ?>'/>
                             </form>
@@ -121,7 +143,10 @@ $alumnos = $json["alumnos"];
             }
             ?>
         </table>
-        <p></p>
+        <p>  <?php 
+        if(isset($mensje))
+            echo $mensaje;
+            ?></p>
         <div>
         <form method="post" action="index.php">
             <p class="linea">Asignaturas que a <strong><?php echo $nombre_alumno; ?> </strong> aun le quedan por calificar:</p>
@@ -132,7 +157,7 @@ $alumnos = $json["alumnos"];
                 }
                 ?>
             </select>
-            <button name="btnselect">Calificar</button>
+            <button name="calificar">Calificar</button>
         </form>
         </div>
 
