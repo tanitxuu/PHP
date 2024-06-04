@@ -10,6 +10,13 @@ if(isset($json['error'])){
     consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
     die(error_page("Examen Colegio","<h1>Notas de los Alumnbos</h1><p>Error al conectarse a la bbdd</p>"));
 }
+if(isset($json['no_auth']))
+{
+    session_unset();
+    $_SESSION["seguridad"]="El tiempo de sesión de la API ha caducado";
+    header("Location: index.php");
+    exit;
+}
 $notas=$json["notas"];
 
 ?>

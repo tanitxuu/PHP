@@ -18,7 +18,7 @@ if (isset($_SESSION['usuario'])) {
     require "../src/seguridad.php";
     if($datos_usuario_log['tipo']=='tutor')
 
-     require "vistas/vista_tutor.php";
+     require "../vistas/vista_tutor.php";
     else
     
     header("Location:../index.php");

@@ -130,10 +130,7 @@ function obtener_notasNO($cod_alu){
     }
     
     try {
-        $consulta = "select asignaturas.denominacion, notas.nota 
-                     FROM notas 
-                     INNER JOIN asignaturas ON notas.cod_asig = asignaturas.cod_asig 
-                     WHERE notas.cod_usu = ? AND notas.nota = 0";
+        $consulta="select * from asignaturas where cod_asig not in (select asignaturas.cod_asig from asignaturas, notas where asignaturas.cod_asig=notas.cod_asig and notas.cod_usu=?)";
         $sentencia = $conexion->prepare($consulta);
         $sentencia->execute([$cod_alu]);
         $respuesta['notas'] = $sentencia->fetchAll(PDO::FETCH_ASSOC);
@@ -178,7 +175,7 @@ function poner_nota($cod_alu,$cod_asig){
     try {
         $consulta = "insert INTO notas (cod_asig, cod_usu, nota) VALUES (?,?,0)";
         $sentencia = $conexion->prepare($consulta);
-        $sentencia->execute([$cod_alu,$cod_alu]);
+        $sentencia->execute([$cod_asig,$cod_alu]);
         $respuesta['mensaje'] = "Asignatura calificada con éxito";
     } catch (PDOException $e) {
         $respuesta["error"] = "Error en la consulta: " . $e->getMessage();
@@ -199,7 +196,7 @@ function editar_notas($cod_alu,$cod_asig,$nota){
     try {
         $consulta = "update notas SET nota=? WHERE cod_usu=? and cod_asig=?;";
         $sentencia = $conexion->prepare($consulta);
-        $sentencia->execute([$nota,$cod_alu,$cod_alu]);
+        $sentencia->execute([$nota,$cod_alu,$cod_asig]);
         $respuesta['mensaje'] = "Asignatura cambiada con éxito";
     } catch (PDOException $e) {
         $respuesta["error"] = "Error en la consulta: " . $e->getMessage();

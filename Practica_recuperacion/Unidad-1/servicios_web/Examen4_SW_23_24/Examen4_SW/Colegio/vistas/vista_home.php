@@ -31,8 +31,13 @@ if (isset($_POST["btnLogin"])) {
             $_SESSION['clave']=$json['usuario']['clave'];
             $_SESSION['api_session']=$json['api_session'];
             $_SESSION["ult_accion"]=time();
+            if($json['usuario']['tipo'] =='tutor'){
+                header("Location:admin/index.php");
+                exit();
+            }else{
             header("Location:index.php");
             exit();
+            }
         }
     } 
 }
