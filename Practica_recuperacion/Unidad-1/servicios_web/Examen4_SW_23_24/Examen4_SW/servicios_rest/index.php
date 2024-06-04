@@ -11,6 +11,7 @@ $app->post('/login', function ($v) {
     $clave = $v->getParam('clave');
     echo json_encode(login($usuario, $clave));
 });
+
 $app->get('/logueado', function ($v) {
     $api = $v->getParam('api_session');
     session_id($api);
@@ -23,12 +24,13 @@ $app->get('/logueado', function ($v) {
         echo json_encode($respuesta);
     }
 });
+
 $app->post('/salir', function ($v) {
     $api = $v->getParam('api_session');
     session_id($api);
     session_start();
     session_destroy();
-    $respuesta['no_auth'] = "Cerrada sesión en la API";
+    $respuesta['log_out'] = "Cerrada sesión en la API";
     echo json_encode($respuesta);
 });
 

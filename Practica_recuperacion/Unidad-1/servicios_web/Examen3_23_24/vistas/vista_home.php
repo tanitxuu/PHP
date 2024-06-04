@@ -3,45 +3,49 @@
     if(isset($_POST["btnEntrar"]))
     {
         $error_usuario=$_POST["usuario"]=="";
-        $error_clave=$_POST["clave"]=="";
-        $error_form=$error_usuario||$error_clave;
-        if(!$error_form)
-        {
-            try{
-                $consulta="select * from usuarios where lector='".$_POST["usuario"]."' and clave='".md5($_POST["clave"])."'";
-                $resultado=mysqli_query($conexion,$consulta);
-            }
-            catch(Exception $e)
-            {
-                session_destroy();
-                mysqli_close($conexion);
-                die(error_page("Examen3 Curso 23-24","<h1>Librería</h1><p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
-            }
-            
-            if(mysqli_num_rows($resultado)>0)
-            {
-                $_SESSION["usuario"]=$_POST["usuario"];
-                $_SESSION["clave"]=md5($_POST["clave"]);
-                $_SESSION["ultima_accion"]=time();
-                $datos_usu_log=mysqli_fetch_assoc($resultado);
-                mysqli_free_result($resultado);
-                mysqli_close($conexion);
-
-                if($datos_usu_log["tipo"]=="normal")
-                {
-                    header("Location:index.php");
-                }
-                else
-                {
-                    header("Location:admin/gest_libros.php");
-                }
-                exit();
-            }
-            else
-                $error_usuario=true;
-         
-            mysqli_free_result($resultado);
+    $error_clave=$_POST["clave"]=="";
+    $error_form=$error_usuario||$error_clave;
+    if(!$error_form)
+    {
+        try{
+            $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")); 
         }
+        catch(PDOException $e){
+            session_destroy();
+            die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible conectar a la BD. Error:".$e->getMessage()."</p>"));
+        }
+    
+        try{
+            $datos[0]=$_POST["usuario"];
+            $datos[1]=md5($_POST["clave"]);
+            $consulta = "SELECT * FROM usuarios WHERE lector=? AND clave=?";
+            $sentencia=$conexion->prepare($consulta);
+            $sentencia->execute($datos);
+        }
+        catch(PDOException $e){
+            $sentencia=null;
+            $conexion=null;
+            session_destroy();
+            die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible realizar la consulta. Error:".$e->getMessage()."</p>"));
+        }
+
+        if($sentencia->rowCount()>0)
+        {
+            $sentencia=null;
+            $conexion=null;
+            $_SESSION["usuario"]=$datos[0];
+            $_SESSION["clave"]=$datos[1];
+            $_SESSION["ultm_accion"]=time();
+            header("Location:index.php");
+            exit();
+        }
+        else
+        {
+            $sentencia=null;
+            $conexion=null;
+            $error_usuario=true;
+        }
+    }
 
     }
 

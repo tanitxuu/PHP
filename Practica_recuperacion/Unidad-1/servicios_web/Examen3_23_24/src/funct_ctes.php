@@ -1,5 +1,5 @@
 <?php
-define("MINUTOS_INACT",5);
+define("MINUTOS",5);
 
 define("SERVIDOR_BD","localhost");
 define("USUARIO_BD","jose");
@@ -26,17 +26,21 @@ function error_page($title,$body)
 function repetido($conexion,$tabla,$columna,$valor,$columna_clave=null,$valor_clave=null)
 {
     try{
-        if(isset($columna_clave))
+        if(isset($columna_clave)){
             $consulta="select * from ".$tabla." where ".$columna."='".$valor."' AND ".$columna_clave."<>'".$valor_clave."'";
-        else
+        }else{
             $consulta="select * from ".$tabla." where ".$columna."='".$valor."'";
+        }
 
-        $resultado=mysqli_query($conexion, $consulta);
-        $respuesta=mysqli_num_rows($resultado)>0;
-        mysqli_free_result($resultado);
+            $sentencia = $conexion->prepare($consulta);
+            $sentencia->execute();
+            $respuesta=$sentencia->fetch(PDO::FETCH_ASSOC);
     }
     catch(Exception $e)
     {
+        $sentencia=null;
+        $conexion=null;
+        session_destroy();
         $respuesta=$e->getMessage();
     }
     return $respuesta;

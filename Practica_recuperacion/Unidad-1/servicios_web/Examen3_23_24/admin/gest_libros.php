@@ -1,5 +1,5 @@
 <?php
-session_name("examen3_23_24");
+session_name("examen3_23_2456");
 session_start();
 
 require "../src/funct_ctes.php";
@@ -29,14 +29,14 @@ if(isset($_SESSION["usuario"]))
 
     require "../src/seguridad.php";
     
-    if($datos_usuario_logueado["tipo"]=="admin")
+    if($datos_usuario_log["tipo"]=="admin")
     {
         require "../vistas/vista_admin.php";
     }
     else
     {
         header("Location:../index.php");
-        exit;
+        exit();
     }
 }
 else

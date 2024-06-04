@@ -1,40 +1,49 @@
 <?php
+try{
+    $conexion=new PDO("mysql:host=".SERVIDOR_BD.";dbname=".NOMBRE_BD,USUARIO_BD,CLAVE_BD,array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'")); 
+}
+catch(PDOException $e){
+    session_destroy();
+    die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible conectar a la BD. Error:".$e->getMessage()."</p>"));
+}
 
 try{
-    $consulta="select * from usuarios where lector='".$_SESSION["usuario"]."' and clave='".$_SESSION["clave"]."'";
-    $resultado=mysqli_query($conexion, $consulta);
- }
- catch(Exception $e)
- {
-     session_destroy();
-     mysqli_close($conexion);
-     die(error_page("Examen3 Curso 23-24","<h1>Librería</h1><p>No se ha podido realizar la consulta: ".$e->getMessage()."</p>"));
- }
-
-if(mysqli_num_rows($resultado)<=0)
-{
-    mysqli_free_result($resultado);
-    mysqli_close($conexion);
-    session_unset();
-    $_SESSION["seguridad"]="Usted ya no se encuentra registrado en la BD";
-    header("Location:".$salto);
-    exit;
+    $datos[0]=$_SESSION["usuario"];
+    $datos[1]=$_SESSION["clave"];
+    $consulta = "SELECT * FROM usuarios WHERE lector=? AND clave=?";
+    $sentencia=$conexion->prepare($consulta);
+    $sentencia->execute($datos);
+}
+catch(PDOException $e){
+    $sentencia=null;
+    $conexion=null;
+    session_destroy();
+    die(error_page("Práctica Rec 2","<h1>Práctica Rec 2</h1><p>Imposible realizar la consulta. Error:".$e->getMessage()."</p>"));
 }
 
-$datos_usuario_logueado=mysqli_fetch_assoc($resultado);
-mysqli_free_result($resultado);
-
-// Ahora control de inactividad
-
-if(time()-$_SESSION["ultima_accion"]>MINUTOS_INACT*60)
+if($sentencia->rowCount()<=0)
 {
-    mysqli_close($conexion);
-    session_unset();
-    $_SESSION["seguridad"]="Su tiempo de sesión ha caducado";
-    header("Location:".$salto);
-    exit;
+        $sentencia=null;
+        $conexion=null;
+        session_unset();
+        $_SESSION["seguridad"]="Usted ya no se encuentra registrado en la BD";
+        header("Location:index.php");
+        exit();
 }
+// Acabo de pasar el control de baneo
+$datos_usuario_log=$sentencia->fetch(PDO::FETCH_ASSOC);
+$sentencia=null;
 
-$_SESSION["ultima_accion"]=time();
+//Ahora paso el control de tiempo
 
+if(time()-$_SESSION["ultm_accion"]>MINUTOS*60)
+{
+    $conexion=null;
+    session_unset();
+    $_SESSION["seguridad"]="Su tiempo de sesión ha expirado. Por favor vuelva a loguearse";
+    header("Location:index.php");
+    exit();
+}
+// Paso el control de tiempo y lo renuevo
+$_SESSION["ultm_accion"]=time();
 ?>
