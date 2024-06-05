@@ -1,17 +1,20 @@
 <?php
+
 if (isset($_POST['borrar'])) {
     $alumno_id = $_POST['alumno_id'];
     $datos_env['cod_asig'] = $_POST['cod_asig'];
     $respuesta = consumir_servicios_REST(DIR_SERV . "/quitarNota/" . $alumno_id, "DELETE", $datos_env);
     $json = json_decode($respuesta, true);
+
     if (!$json) {
         session_destroy();
         die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
     }
     if (isset($json['error'])) {
         session_destroy();
-        consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
-        die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+        $_SESSION["seguridad"] = "El tiempo de sesión de la API ha caducado";
+        header("Location: index.php");
+        exit;
     }
     if (isset($json['no_auth'])) {
         session_unset();
@@ -22,22 +25,25 @@ if (isset($_POST['borrar'])) {
 
     $_SESSION['mensaje'] = "¡Asignatura descalificada con exito!";
     $_SESSION['id'] = $alumno_id;
-    header("Location:index.php");
+    header("Location: index.php");
     exit();
 }
+
 if (isset($_POST['calificar'])) {
     $alumno_id = $_POST['alumno_id'];
     $datos_env['cod_asig'] = $_POST['cod_asig'];
-    $respuesta = consumir_servicios_REST(DIR_SERV . "/ponerNota/" . $alumno_id, "post", $datos_env);
+    $respuesta = consumir_servicios_REST(DIR_SERV . "/ponerNota/" . $alumno_id, "POST", $datos_env);
     $json = json_decode($respuesta, true);
+
     if (!$json) {
         session_destroy();
         die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
     }
     if (isset($json['error'])) {
         session_destroy();
-        consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
-        die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+        $_SESSION["seguridad"] = "El tiempo de sesión de la API ha caducado";
+        header("Location: index.php");
+        exit;
     }
     if (isset($json['no_auth'])) {
         session_unset();
@@ -45,29 +51,33 @@ if (isset($_POST['calificar'])) {
         header("Location: index.php");
         exit;
     }
-    
-        $_SESSION['mensaje'] = "¡Asignatura calificada con 0 presione editar para cambiar la nota!";
-        $_SESSION['id'] = $alumno_id;
-    header("Location:index.php");
+
+    $_SESSION['mensaje'] = "¡Asignatura calificada con 0 presione editar para cambiar la nota!";
+    $_SESSION['calificar'] = $_POST['cod_asig'];
+    $_SESSION['id'] = $alumno_id;
+    header("Location: index.php");
     exit();
-   
 }
+
+
 if (isset($_POST['editarcambios'])) {
-    $error_nota = $_POST['notaeditar'] == '' || !is_numeric(($_POST['notaeditar'])) || floatval($_POST['notaeditar']) < 0;
+    $error_nota = empty($_POST['notaeditar']) || !is_numeric($_POST['notaeditar']) || $_POST['notaeditar'] < 0 || $_POST['notaeditar'] > 10;
     if (!$error_nota) {
         $alumno_id = $_POST['alumno_id'];
         $datos_env['cod_asig'] = $_POST['cod_asig'];
         $datos_env['nota'] = floatval($_POST['notaeditar']);
         $respuesta = consumir_servicios_REST(DIR_SERV . "/cambiarNota/" . $alumno_id, "PUT", $datos_env);
         $json = json_decode($respuesta, true);
+
         if (!$json) {
             session_destroy();
             die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
         }
         if (isset($json['error'])) {
             session_destroy();
-            consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
-            die(error_page("Examen colegio", "<h1>Error Examen</h1><p>Error al consumir servicio api</p>"));
+            $_SESSION["seguridad"] = "El tiempo de sesión de la API ha caducado";
+            header("Location: index.php");
+            exit;
         }
         if (isset($json['no_auth'])) {
             session_unset();
@@ -75,19 +85,27 @@ if (isset($_POST['editarcambios'])) {
             header("Location: index.php");
             exit;
         }
-        
-            $_SESSION['mensaje'] = "¡Nota cambiada con exito!";
-            $_SESSION['id'] = $alumno_id;
-    header("Location:index.php");
-    exit();
-        
+
+        $_SESSION['mensaje'] = "¡Nota cambiada con exito!";
+        $_SESSION['id'] = $alumno_id;
+        header("Location: index.php");
+        exit();
     }
 }
+
+
+
 if (isset($_SESSION['id'])) {
     $_POST['alumno_id'] = $_SESSION['id'];
-    unset($_SESSION['alumno_id']);
+    unset($_SESSION['id']);
 }
+if (isset($_SESSION['calificar'])) {
+   
+    $_POST['btncalificar']=true;
+    $_POST['asignatura']=$_SESSION['calificar'];
+    unset($_SESSION["calificar"]);
 
+}
 
 $respuesta = consumir_servicios_REST(DIR_SERV . "/alumnos", "GET", $datos_env);
 $json = json_decode($respuesta, true);
@@ -151,7 +169,8 @@ $alumnos = $json["alumnos"];
         td {
             border: 1px solid black;
         }
-        .error{
+
+        .error {
             color: red;
         }
     </style>
@@ -173,6 +192,7 @@ $alumnos = $json["alumnos"];
                         $nombre_alumno = $alumno['nombre'];
                     } else {
                         echo "<option value='" . $alumno['cod_usu'] . "'>" . $alumno['nombre'] . "</option>";
+                      
                     }
                 }
                 ?>
@@ -182,24 +202,25 @@ $alumnos = $json["alumnos"];
     </div>
 
     <?php
-    if (isset($_POST['alumno_id'])  || isset($_POST['calificar']) || isset($_POST['editarcambios'])) {
+
+    if (isset($_POST['alumno_id'])) {
         $alumno_id = $_POST['alumno_id'];
 
         $respuesta = consumir_servicios_REST(DIR_SERV . "/notasAlumno/" . $alumno_id, "GET", $datos_env);
-        $resp = consumir_servicios_REST(DIR_SERV . "/NotasNoEvalAlumno/" . $alumno_id, "GET", $datos_env);
+      
         $json = json_decode($respuesta, true);
-        $json2 = json_decode($resp, true);
+      
 
-        if (!$json || !$json2) {
+        if (!$json ) {
             session_destroy();
             die(error_page("Examen Colegio", "<h1>Notas de los Alumnos</h1><p>Error al obtener notas</p>"));
         }
-        if (isset($json['error']) || isset($json2['error'])) {
+        if (isset($json['error'])) {
             session_destroy();
             consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
             die(error_page("Examen Colegio", "<h1>Notas de los Alumnos</h1><p>Error al conectarse a la BBDD</p>"));
         }
-        if (isset($json['no_auth']) || isset($json2['no_auth'])) {
+        if (isset($json['no_auth'])){
             session_unset();
             $_SESSION["seguridad"] = "El tiempo de sesión de la API ha caducado";
             header("Location: index.php");
@@ -207,6 +228,24 @@ $alumnos = $json["alumnos"];
         }
 
         $notas = $json["notas"];
+
+        $resp = consumir_servicios_REST(DIR_SERV . "/NotasNoEvalAlumno/" . $alumno_id, "GET", $datos_env);
+        $json2 = json_decode($resp, true);
+        if (!$json2) {
+            session_destroy();
+            die(error_page("Examen Colegio", "<h1>Notas de los Alumnos</h1><p>Error al obtener notas</p>"));
+        }
+        if ( isset($json2['error'])) {
+            session_destroy();
+            consumir_servicios_REST(DIR_SERV . "/salir", "POST", $datos_env);
+            die(error_page("Examen Colegio", "<h1>Notas de los Alumnos</h1><p>Error al conectarse a la BBDD</p>"));
+        }
+        if (isset($json2['no_auth'])) {
+            session_unset();
+            $_SESSION["seguridad"] = "El tiempo de sesión de la API ha caducado";
+            header("Location: index.php");
+            exit();
+        }
         $notasNO = $json2['notas'];
         if (count($alumnos) <= 0) {
             echo "<p>En estos momentos no tenemos registrado ningun alumno en la BD</p>";
@@ -224,37 +263,38 @@ $alumnos = $json["alumnos"];
 
                 ?>
                     <tr>
-                        <td><?php echo $nota['denominacion']; ?></td>
                         <td>
-                            <?php if (isset($_POST['editar']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST['editarcambios']) && $nota['cod_asig'] == $_POST['cod_asig'] ) { ?>
-                                <form action="index.php" method="post" class="linea">
-                                    <input type="text" name="notaeditar" value='<?php echo $nota['nota']; ?>' />
-                                    <?php
-                                    if (isset($_POST['editarcambios']) && $error_nota) {
-                                        echo "<span class='error'>*Nota no valida*</span>";
-                                    }
-                                    ?>
-                                    <input type="hidden" name="alumno_id" value='<?php echo $alumno_id; ?>' />
-                                    <input type="hidden" name="nota_id" value='<?php echo $nota['cod_usu']; ?>' />
-                                </form>
-                            <?php } else { ?>
-                                <?php echo $nota['nota']; ?>
-                            <?php } ?>
+                            <form action="index.php" method="post" class="linea"><?php echo $nota['denominacion']; ?>
                         </td>
                         <td>
-                            <form action="index.php" method="post">
-                                <?php if (isset($_POST['editar']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST['editarcambios']) && $nota['cod_asig'] == $_POST['cod_asig'] ) { ?>
-                                    <button name="editarcambios" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Cambiar</button>-
-                                    <button name="atras" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Atras</button>
-                                    <input type="hidden" name="alumno_id" value="<?php echo $alumno_id; ?>" />
-                                    <input type="hidden" name="cod_asig" value="<?php echo $nota['cod_asig']; ?>" />
-                                <?php } else { ?>
+                            <?php if (isset($_POST['editar']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST['editarcambios']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST["btncalificar"]) && $_POST["asignatura"]==$tupla["cod_asig"]) {
 
-                                    <button name="editar" class="enlace">Editar</button>-
-                                    <button name="borrar" class="enlace">Borrar</button>
-                                    <input type="hidden" name="alumno_id" value="<?php echo $alumno_id; ?>" />
-                                    <input type="hidden" name="cod_asig" value="<?php echo $nota['cod_asig']; ?>" />
-                                <?php } ?>
+                                if (isset($_POST['editarcambios'])) {
+                                    echo " <input type='text' name='notaeditar' value='" . $_POST['notaeditar'] . "' /><br/>";
+                                } else {
+                                    echo " <input type='text' name='notaeditar' value='" . $nota['nota'] . " '/><br/>";
+                                }
+                                if (isset($_POST['editarcambios']) && $error_nota) {
+                                    echo "<span class='error'>*Nota no valida*</span>";
+                                }
+                            } else {
+                                echo $nota['nota'];
+                            } ?>
+                        </td>
+                        <td>
+
+                            <?php if (isset($_POST['editar']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST['editarcambios']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST["btncalificar"]) && $_POST["asignatura"]==$tupla["cod_asig"]) { ?>
+                                <button name="editarcambios" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Cambiar</button>-
+                                <button name="atras" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Atras</button>
+
+                            <?php } else { ?>
+
+                                <button name="editar" class="enlace">Editar</button>-
+                                <button name="borrar" class="enlace">Borrar</button>
+
+                            <?php } ?>
+                            <input type="hidden" name="alumno_id" value="<?php echo $_POST['alumno_id']; ?>" />
+                            <input type="hidden" name="cod_asig" value="<?php echo $nota['cod_asig']; ?>" />
                             </form>
                         </td>
                     </tr>
@@ -263,13 +303,16 @@ $alumnos = $json["alumnos"];
                 ?>
             </table>
         <?php
+
         }
         ?>
-        <p class="mensaje"> <?php
-                            if (isset($_SESSION['mensaje']))
-                                echo $_SESSION['mensaje'];
-                            unset($_SESSION['mensaje']);
-                            ?></p>
+        <p class="mensaje">
+            <?php
+            if (isset($_SESSION['mensaje']))
+                echo $_SESSION['mensaje'];
+                unset($_SESSION['mensaje']);
+            ?>
+        </p>
         <?php
         if (count($notasNO) <= 0) {
             echo "<p>Al alumno no le queda ninguna asignatura por calificar</p>";
@@ -277,8 +320,8 @@ $alumnos = $json["alumnos"];
         ?>
             <div>
                 <form method="post" action="index.php">
-                    <p class="linea">Asignaturas que a <strong><?php echo $nombre_alumno; ?> </strong> aun le quedan por
-                        calificar:</p>
+                <input type="hidden" name="alumno_id" value="<?php echo $_POST['alumno_id']; ?>" />
+                    <p class="linea">Asignaturas que a <strong><?php echo $nombre_alumno; ?> </strong> aun le quedan por calificar:</p>
                     <select name="cod_asig">
                         <?php
                         foreach ($notasNO as $nota) {
@@ -286,8 +329,7 @@ $alumnos = $json["alumnos"];
                         }
                         ?>
                     </select>
-                    <button name="calificar">Calificar</button>
-                    <input type="hidden" name="alumno_id" value="<?php echo $_POST['alumno_id'];; ?>" />
+                    <button name="calificar">Calificar</button> 
                 </form>
             </div>
 

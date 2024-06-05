@@ -130,7 +130,7 @@ function obtener_notasNO($cod_alu){
     }
     
     try {
-        $consulta="select * from asignaturas where cod_asig not in (select asignaturas.cod_asig from asignaturas, notas where asignaturas.cod_asig=notas.cod_asig and notas.cod_usu=?)";
+        $consulta="select * from asignaturas where cod_asig not in (select cod_asig from  notas where cod_usu=?)";
         $sentencia = $conexion->prepare($consulta);
         $sentencia->execute([$cod_alu]);
         $respuesta['notas'] = $sentencia->fetchAll(PDO::FETCH_ASSOC);
