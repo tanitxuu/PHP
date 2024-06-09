@@ -267,7 +267,7 @@ $alumnos = $json["alumnos"];
                             <form action="index.php" method="post" class="linea"><?php echo $nota['denominacion']; ?>
                         </td>
                         <td>
-                            <?php if (isset($_POST['editar']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST['editarcambios']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST["btncalificar"]) && $_POST["asignatura"]==$tupla["cod_asig"]) {
+                            <?php if (isset($_POST['editar']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST['editarcambios']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST["btncalificar"]) && $_POST["asignatura"]==$nota["cod_asig"]) {
 
                                 if (isset($_POST['editarcambios'])) {
                                     echo " <input type='text' name='notaeditar' value='" . $_POST['notaeditar'] . "' /><br/>";
@@ -283,7 +283,7 @@ $alumnos = $json["alumnos"];
                         </td>
                         <td>
 
-                            <?php if (isset($_POST['editar']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST['editarcambios']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST["btncalificar"]) && $_POST["asignatura"]==$tupla["cod_asig"]) { ?>
+                            <?php if (isset($_POST['editar']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST['editarcambios']) && $nota['cod_asig'] == $_POST['cod_asig'] || isset($_POST["btncalificar"]) && $_POST["asignatura"]==$nota["cod_asig"]) { ?>
                                 <button name="editarcambios" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Cambiar</button>-
                                 <button name="atras" value='" <?php $nota['cod_usu'] ?>"' class="enlace">Atras</button>
 
