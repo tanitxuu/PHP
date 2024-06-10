@@ -22,7 +22,7 @@ function login($usuario, $clave)
     if ($sentencia->rowCount() > 0) {
         $respuesta['usuario'] = $sentencia->fetch(PDO::FETCH_ASSOC);
 
-        session_name("Horarios");
+        session_name("Horarios1");
         session_start();
 
         $_SESSION['usuario'] = $respuesta['usuario']['usuario'];

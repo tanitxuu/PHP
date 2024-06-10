@@ -36,6 +36,7 @@ $datos_usuario_log=$json["usuario"];
 if(time()-$_SESSION["ult_accion"]>MINUTOS*60)
 {
     session_unset();
+    consumir_servicios_REST(DIR_SERV."/salir","POST",$datos_env);
     $_SESSION["seguridad"]="Su tiempo de sesión ha expirado";
     header("Location:".$salto);
     exit;

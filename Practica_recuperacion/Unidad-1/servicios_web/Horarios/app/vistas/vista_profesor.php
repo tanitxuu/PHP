@@ -139,7 +139,7 @@ $horas = [
 ];
 
 $dias = [
-    0 => "",
+    0 => "Hora/Día",
     1 => "Lunes",
     2 => "Martes",
     3 => "Miércoles",
@@ -270,22 +270,23 @@ $profesores = $json['profesores'];
         <h2>Horario del Profesor: <?php echo $nombre_profesor; ?></h2>
         <table>
             <tr>
-                <th>Hora/Día</th>
+                
                 <?php
-                for ($i = 1; $i <= 5; $i++) {
+                for ($i = 0; $i <= 5; $i++) {
                     echo "<th>" . $dias[$i] . "</th>";
                 }
                 ?>
             </tr>
             <?php
-            for ($i = 1; $i <= count($horas); $i++) {
+            //poner horas
+            for ($hora = 1; $hora <= count($horas); $hora++) {
                 echo "<tr>";
-                echo "<td>" . $horas[$i] . "</td>";
-                if ($i != 4) { // Recreo
-                    for ($j = 1; $j <= 5; $j++) {
+                echo "<td>" . $horas[$hora] . "</td>";
+                if ($hora != 4) { // Recreo
+                    for ($dia = 1; $dia <= 5; $dia++) {
                         $grupos = [];
                         foreach ($horario as $value) {
-                            if ($value['dia'] == $j && $value['hora'] == $i) {
+                            if ($value['dia'] == $dia && $value['hora'] == $hora) {
                                 $grupos[] = $value['nombre'];
                             }
                         }
@@ -297,8 +298,8 @@ $profesores = $json['profesores'];
 
                         <form action="index.php" method="post" class="linea">
                             <button class="enlace" name="editar">Editar</button>
-                            <input type="hidden" name="dia" value="<?php echo $j ?>">
-                            <input type="hidden" name="hora" value="<?php echo $i ?>">
+                            <input type="hidden" name="dia" value="<?php echo $dia ?>">
+                            <input type="hidden" name="hora" value="<?php echo $hora ?>">
                             <input type="hidden" name="profesor" value="<?php echo $_POST['profesor'] ?>">
 
                         </form>
@@ -339,8 +340,12 @@ $profesores = $json['profesores'];
             }
 
             $cursos = $json['cursos'];
-
-            echo "<h2>Editando " . $_POST['hora'] . "º hora(" . $horas[$_POST['hora']] . ") del " . $dias[$_POST['dia']] . "</h2>";
+            if($_POST['hora']>4){
+                echo "<h2>Editando " . $_POST['hora']-1 . "º hora(" . $horas[$_POST['hora']] . ") del " . $dias[$_POST['dia']] . "</h2>";
+            }else{
+                echo "<h2>Editando " . $_POST['hora'] . "º hora(" . $horas[$_POST['hora']] . ") del " . $dias[$_POST['dia']] . "</h2>";
+            }
+            
             echo "<table>";
             echo "<tr><th>Grupo</th><th>Acción</th></tr>";
 
@@ -358,10 +363,12 @@ $profesores = $json['profesores'];
             echo "</table>";
 
             if (isset($_SESSION['mensaje'])) {
+                echo "<br>";
                 echo "<span class='mensaje'>" . $_SESSION['mensaje'] . "</span>";
+                echo "<br>";
                 unset($_SESSION['mensaje']);
             }
-            $datos_env['dia'] = $_POST['dia'];
+     
 
             ?>
             <br>
