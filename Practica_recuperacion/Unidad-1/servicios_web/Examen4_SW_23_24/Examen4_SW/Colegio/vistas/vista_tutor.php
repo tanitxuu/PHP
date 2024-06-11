@@ -338,5 +338,3 @@ $alumnos = $json["alumnos"];
     }
     ?>
 </body>
-
-</html>

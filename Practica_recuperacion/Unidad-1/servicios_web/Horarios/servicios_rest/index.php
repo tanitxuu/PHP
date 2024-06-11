@@ -79,16 +79,13 @@ $app->get("/editar/{id_usuario}", function ($v) {
     }
 });
 
-$app->delete("/borrar/{id_usuario}", function ($v) {
+$app->delete("/borrar", function ($v) {
     $api = $v->getParam('api_session');
     session_id($api);
     session_start();
     if (isset($_SESSION['usuario'])) {
-        $id_usuario=$v->getAttribute('id_usuario');
-        $dia=$v->getParam('dia');
-        $hora=$v->getParam('hora');
-        $grupo=$v->getParam('id_grupo');
-        echo json_encode(borrar($id_usuario,$dia,$hora,$grupo));
+        $id_horario=$v->getParam('id_horario');
+        echo json_encode(borrar($id_horario));
     } else {
        
         session_destroy();

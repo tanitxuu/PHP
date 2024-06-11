@@ -142,7 +142,7 @@ function editar($id_usuario,$dia,$hora)
     return $respuesta;
 }
 
-function borrar($id_usuario,$dia,$hora,$grupo)
+function borrar($id_hoarario)
 {
     try {
         $conexion = new PDO("mysql:host=" . SERVIDOR_BD . ";dbname=" . NOMBRE_BD, USUARIO_BD, CLAVE_BD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
@@ -151,9 +151,9 @@ function borrar($id_usuario,$dia,$hora,$grupo)
         return $respuesta;
     }
     try {
-        $consulta = "DELETE FROM `horario_lectivo` where usuario=? and dia=? and hora=? and grupo=?";
+        $consulta = "DELETE FROM `horario_lectivo` where id_horario=?";
         $sentencia = $conexion->prepare($consulta);
-        $sentencia->execute([$id_usuario,$dia,$hora,$grupo]);
+        $sentencia->execute([$id_hoarario]);
     } catch (PDOException $e) {
         $conexion = null;
         $respuesta["error"] = "Imposible conectar a la BD. Error:" . $e->getMessage();
@@ -199,9 +199,9 @@ function cursos($dia,$hora,$id_usuario)
         return $respuesta;
     }
     try {
-        $consulta = "SELECT g.id_grupo, g.nombre FROM grupos g LEFT JOIN horario_lectivo h ON g.id_grupo = h.grupo AND h.dia = ? AND h.hora = ? AND h.usuario = ? WHERE h.grupo IS NULL;)";
+        $consulta = "select * from grupos where id_grupo not in (select grupo from horario_lectivo where usuario=? and dia=? and hora=?); ";
         $sentencia = $conexion->prepare($consulta);
-        $sentencia->execute([$dia,$hora,$id_usuario]);
+        $sentencia->execute([$id_usuario,$dia,$hora]);
     } catch (PDOException $e) {
         $conexion = null;
         $respuesta["error"] = "Imposible conectar a la BD. Error:" . $e->getMessage();
