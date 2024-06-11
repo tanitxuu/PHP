@@ -36,7 +36,7 @@ $datos_usuario_log=$json["usuario"];
 
 if(time()-$_SESSION["ultm_accion"]>MINUTOS*60)
 {
-    $conexion=null;
+  
     session_unset();
     $_SESSION["seguridad"]="Su tiempo de sesión ha expirado. Por favor vuelva a loguearse";
     header("Location:".$salto);// depende donde estamos $salto varia; esta variable la cambiamos antes del require de seguridad
